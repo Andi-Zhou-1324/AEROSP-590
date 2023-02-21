@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx,subfigure}
+\usepackage{enumerate}
+\usepackage{amsmath, mathtools, amssymb, amsthm}
+\usepackage[margin=0.7in]{geometry}
+\usepackage{soul}
+
+\title{Conservation and Stability}
+\author{(Your name here)}
+\date{February 2nd, 2023}
+
+\begin{document}
+\maketitle
+
+Consider a 1D system of conservation laws:
+\begin{equation}\label{eq:1D_PDE}
+    \frac{\partial \mathbf{u}}{\partial t} \ + \ \frac{\partial \mathbf{f}}{\partial x} \ = \ 0, \ \mathbf{u} \in \mathbb{R}^{K}, \ \mathbf{f} \in \mathbb{R}^{K}.
+\end{equation} 
+\begin{enumerate}
+    \item Consider a $1^{st}$ order finite volume discretization of system (\ref{eq:1D_PDE}). Prove that $\mathbf{u}$ is conserved at the semi-discrete level (hint: telescoping). Does it amount to a stability statement (consider boundary conditions)? 
+    \item What if there is a diffusion term ? 
+    \item What if we add a source term ?
+    \item What about higher-order finite-volume schemes? Does conservation still hold? Why? You can pick an example finite-volume scheme from the literature.
+    \item Let's now consider time-integration. Choose three different time-integration schemes and prove that conservation of $\mathbf{u}$ at the semi-discrete level implies conservation at the fully discrete level.
+\end{enumerate} 
+\hspace*{0.4 cm} Now consider the 2D system:
+\begin{equation}\label{eq:2D_PDE}
+     \frac{\partial \mathbf{u}}{\partial t} \ + \ \frac{\partial \mathbf{f}_x}{\partial x} \ + \ \frac{\partial \mathbf{f}_y}{\partial y} \ = \ 0, \ \mathbf{u} \in \mathbb{R}^{K}, \ \mathbf{f}_x \in \mathbb{R}^{K}, \mathbf{f}_y \in \mathbb{R}^{K}.
+\end{equation}
+\begin{enumerate}
+    \item Consider a finite-volume discretization. Prove that $\mathbf{u}$ is conserved as well. You can start by assuming the mesh to be structured. Then prove the result for a general unstructured mesh.
+    \item Find a 2nd order finite-volume scheme for a triangular unstructured mesh in the literature, and detail its steps (how are fluxes computed at edges?).
+    \item Consider a discontinuous Galerkin (DG) scheme in space. DG schemes are known to be conservative (i.e. conserve $\mathbf{u}$). What is implicitly assumed in that statement?
+\end{enumerate}
+\hspace*{ 0.4 cm} Consider the 1D advection equation $(K=1, \mathbf{u}=u, \mathbf{f} = a u, a=1$) on a domain $[0, 1]$. Periodic boundary conditions. Initial condition: Gaussian pulse centered at $x = 0.5$. 
+\begin{enumerate}
+    \item Run it with a first-order finite-volume scheme until $t=0.5 s$ with the six schemes listed below and discuss your results (what time step/ mesh size values to use is up to you):
+    \begin{itemize}
+        \item In space: central flux, upwind flux.
+        \item In time: Forward Euler, Backward Euler, Midpoint rule.
+    \end{itemize}
+    Are you surprised by certain results?
+    \item Do all these schemes conserve $u$ ? Confirm your statement numerically. 
+    \item Prove that $u^{2}$ also satisfies a conservation equation. Do any of the schemes conserve $u^2$ at the semi-discrete level and/or fully-discrete level? Numerical and/or theoretical proof expected.
+\end{enumerate}
+\indent Try answering all the questions. Do cite the papers you learned \cite{LastNameJournalYear} (including the page/section that contains the relevant information). You are encouraged to introduce your own notation. Last but not least, \underline{carry out the proofs yourself}, do not defer to some paper.  
+
+
+
+\begin{thebibliography}{9}
+\input{bibliography.tex}
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx,subfigure}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{amsmath, mathtools, amssymb, amsthm}
+\usepackage[margin=0.7in]{geometry}
+\usepackage{soul}
+
+\title{Entropy Stability}
+\author{(Your name here)}
+\date{February 2nd, 2023}
+
+\begin{document}
+\maketitle
+
+
+Dig the literature to provide answers to the following questions. \underline{You cannot refer to any paper published after 1985}. You can read more recent papers - but they should be pointing to earlier works.
+\begin{enumerate}
+    \item Who came up with the entropy condition? Oldest readable reference you can find. Where does that condition come from? What are the motivations?
+    \item Find two first-order numerical fluxes that do satisfy this condition, under certain assumptions. Success stories (did they bring tangible improvements)? There are more than two.
+    \item Philip Roe is a legend in CFD, in part for his 'Roe flux'. 
+    \begin{enumerate}
+        \item Find the paper where he first introduced it.
+        \item How did Phil Roe derive the 'Roe average'? What was he after that led to it?
+    \end{enumerate}    
+    \item One approach to entropy-stability was introduced by Tadmor in 1987 ( read \cite{Tadmor1987}). What distinguishes it from others?
+    \item It took quite some time for Tadmor's ideas to gain popularity. Moon mentioned work by Fisher and Carpenter in 2013, where robustness potential for higher-order schemes was demonstrated for the first time. But Phil Roe made key contributions in 2006 (see \cite{Roe2006}). Discuss them
+    \begin{itemize}
+        \item[-] Why is there a logarithmic average in his flux?
+    \end{itemize}
+\end{enumerate}
+Consider the 1D compressible Euler equations for a perfect gas,
+\begin{enumerate}
+    \item Derive the conservation equation for entropy $(\rho s)$. 
+    \item How would you formalize the derivation you just carried out? Say you have a system of conservation laws with $\mathbf{u}$ and $\mathbf{f}$, and you are asked to derive the conservation equation (assuming there is one) for a scalar valued function $U = U(\mathbf{u})$.
+    \item Does the number of spatial dimensions matter?
+    \item Is $(\rho s)$ a convex function of mass, momentum and total energy? Define convexity first.
+    \item What are numerical and theoretical benefits of convexity?
+    \item Prove that the original Roe flux is not entropy-stable, using Tadmor's framework \cite{Tadmor1987} and a code implementation of the Roe flux.  
+    \begin{itemize}
+        \item People were already aware that the Roe flux was not entropy-stable. A correction called 'entropy fix' was introduced. Find the paper that first introduced it. 
+        \item Is the Roe flux with the entropy-fix entropy-stable ?  
+    \end{itemize}
+\end{enumerate}
+
+\begin{thebibliography}{9}
+\input{bibliography.tex}
+\end{thebibliography}
+\end{document}
