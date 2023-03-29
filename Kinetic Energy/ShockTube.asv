@@ -3,7 +3,7 @@ clc
 clear
 close all
 %%
-N = 100;
+N = 200;
 gamma = 1.4;
 
 u = zeros(N,3);
@@ -72,9 +72,9 @@ ylabel('rho')
 
 %Calculate residual for 1 timestep
 function [Residual] = calculateResidual(u,N,E2N,flux)
-    EdgeFlux = zeros(E2N,size(u,2));
+    EdgeFlux = zeros(E2N,3);
     Residual = zeros(N,size(u,2)); 
-    parfor i = 1:size(E2N,1)
+    for i = 1:size(E2N,1)
         L_indx = E2N(i,1);
         R_indx = E2N(i,2);
         uL = u(L_indx,:);
@@ -83,17 +83,14 @@ function [Residual] = calculateResidual(u,N,E2N,flux)
         uR_temp = [uR(1),uR(2),0,uR(3)];
         [F] = flux(uL_temp,uR_temp,[1;0]);
         F(3) = [];
+        
         EdgeFlux(i,:) = F;
+
+
     end
-    
+
     for i = 1:size(EdgeFlux,1)
         L_indx = E2N(i,1);
         R_indx = E2N(i,2);
-        if L_indx ~= 1
-            Residual(L_indx,:) = Residual(L_indx,:) + F;
-        end
-        if R_indx ~= max(max(E2N))
-            Residual(R_indx,:) = Residual(R_indx,:) - F;
-        end
     end
 end

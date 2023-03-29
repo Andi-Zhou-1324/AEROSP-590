@@ -72,8 +72,9 @@ ylabel('rho')
 
 %Calculate residual for 1 timestep
 function [Residual] = calculateResidual(u,N,E2N,flux)
+    EdgeFlux = zeros(size(E2N,1),3);
     Residual = zeros(N,size(u,2)); 
-    for i = 1:size(E2N,1)
+    parfor i = 1:size(E2N,1)
         L_indx = E2N(i,1);
         R_indx = E2N(i,2);
         uL = u(L_indx,:);
@@ -81,12 +82,18 @@ function [Residual] = calculateResidual(u,N,E2N,flux)
         uL_temp = [uL(1),uL(2),0,uL(3)];
         uR_temp = [uR(1),uR(2),0,uR(3)];
         [F] = flux(uL_temp,uR_temp,[1;0]);
-        F(3) = [];
+        F(3) = []; 
+        EdgeFlux(i,:) = F;
+    end
+
+    for i = 1:size(EdgeFlux,1)
+        L_indx = E2N(i,1);
+        R_indx = E2N(i,2);
         if L_indx ~= 1
-            Residual(L_indx,:) = Residual(L_indx,:) + F;
+            Residual(L_indx,:) = Residual(L_indx,:) + EdgeFlux(i,:);
         end
         if R_indx ~= max(max(E2N))
-            Residual(R_indx,:) = Residual(R_indx,:) - F;
+            Residual(R_indx,:) = Residual(R_indx,:) - EdgeFlux(i,:);
         end
     end
 end
