@@ -55,7 +55,6 @@ while t < T
     [Residual_2] = calculateResidual_periodic(u_1,N,E2N,@roe);
     u = u - dt.*(0.5.*(Residual_1+Residual_2));
     
-    %%%%%%%%%%%Output statements
     if mod(count,100) == 0
         fprintf("Residual = "+ sum(abs(Residual_1),'all')+", t = "+t+"\n");
         delete(c1);
@@ -69,7 +68,7 @@ while t < T
         save = save + 1;
         fprintf("Solution Saved!\n\n")
     end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
     %Advance in Time
     t = t + dt;
    
