@@ -53,7 +53,6 @@ def FluxFunction(UL, UR, gamma, n):
     FR[1] = UR[1]*unR + pR*n[0]
     FR[2] = UR[2]*unR + pR*n[1]
     FR[3] = rHR*unR
-
     # difference in states
     du = UR - UL
 
