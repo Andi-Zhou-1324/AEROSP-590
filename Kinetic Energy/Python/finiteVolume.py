@@ -1,12 +1,12 @@
 import numpy as np
 from calculateResidual import calculateResidual
-def finiteVolume(x_start, x_end, N, CFL,t_end):
+def finiteVolume(x_start, x_end, N, CFL,t_end,u):
     #Calculating x domain coordinates
     dx = (x_end - x_start)/N
     x = np.arange(x_start+dx/2,x_end-dx/2+dx,dx)
     
     #Defining initial state array
-    u = np.zeros((N,3))  + 1
+
 
     #Assembling E2N array. This series of array specifies the edge-element
     #connectivities
