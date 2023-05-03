@@ -1,0 +1,90 @@
+\documentclass[a4paper]{article}
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{comment}
+
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+
+\usepackage{algorithm} 
+\usepackage{algpseudocode} 
+
+
+% For multiple pages in a pdf document
+\usepackage{pdfpages}
+
+\usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\lstset{language=Matlab,%
+    %basicstyle=\color{red},
+    breaklines=true,%
+    morekeywords={matlab2tikz},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=9pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style},    
+}
+\title{AEROSP 590: Entropy Condition}
+\author{Andi Zhou}
+\begin{document}
+\maketitle
+
+\section{Entropy Condition - Origin and Formulation}
+\subsection{Origin}
+In this section we explain the entropy condition, and explain why this would be necessary in solving Hyperbolic Partial Differential Equations. To explain the neccesity of entropy condition, we first start but discussing a \textit{single conservation law}.
+\subsection{Single Conservation Law}
+We consider a single conservation law:
+\begin{equation} \label{singleConservationLaw}
+    u_t + f_x = 0
+\end{equation}
+where $f$ is a non-linear function of $U$, where:
+\begin{equation}
+    \frac{df}{du} = a(u)
+\end{equation}
+Using chain rule, we could writhe Equation \ref{singleConservationLaw} as:
+\begin{equation}
+    u_t + a(u)u_x = 0
+\end{equation}
+If $u$ is constant along a characteristic trajectory, we also know that $a$ will be constant as well. $u$ would propagate along space in speed $a$. Therefore, we also define $a$ as the signal speed. The trajectories of $u$ would be defined as a characteristics. Equation \ref{singleConservationLaw} is known as the strong (differential) form of the PDE, where a solution to this equation would need to satisfy the differential operators at all points in space and time. A solution that matches the strong form is known as the a strong solution. However, the differential form could not admit discontinuities. We now consider the weak form:
+
+\begin{equation}
+    \int_{0}^{\infty} \int_{-\infty}^{\infty} \left[w_t u + w_x f(u) \right] dx dt + \int_{\infty}^\infty w(x,0) \phi(x) dx = 0
+\end{equation}
+where $w$ is any smooth test function with compact support (non-zero only within the specified element). The general idea of weak solution is that we could rewrite the derivatives of $u$ as derivatives of compact test function $w$. From this, we basically eliminated the need for solution to be continuous. However, for hyperbolic systems (which we are interested in), the notion of weak solution \textbf{does not} guarantee uniqueness. Therefore, we need some sort of criterions to select a solution that is \textit{physical}. We then have the \textbf{entropy} condition. 
+
+It is rather difficult to trace when the notion of entropy condition was first introduced. Earliest written work that could be traced on this subjects were done by P. Lax [citation] and O. Oleinik [citation]. Both authors have mentioned the idea of \textit{entropy conditions} repeatedly in their text. Oleinik [citation needed] has shown that physically relevant solutions must have the following properties:
+\begin{equation}
+    \frac{f(u) - f(u_L)}{u-u_L} \geq S \geq \frac{f(u) - f(u_R)}{u-u_R}
+\end{equation}
+This is known by Oleinik as \textit{Condition E}. If we use the Rankine-Hugoniot jump relation:
+\begin{equation}
+    f(u_R) - f(u_L) = S(u_R - u_L)
+\end{equation}
+we also arrive at the \textit{Lax entropy condition}:
+\begin{equation}
+    a(u_l) > S > a(u_r)
+\end{equation}
+$S$ in the above equation is the speed of discontinuity. In essence, the entropy condition defines that characteristic line should ALWAYS run into the shock, not away from it. 
+
+\section{Entropy Condition Fluxes}
+Several fluxes satisfy the above entropy condition. We understood from Lax [] that any monotone scheme satisfy the entropy condition. In this section we specifically focus on first order scheme. 
+
+\end{document}
