@@ -11,7 +11,7 @@ E2N = [(1:N-1)',(2:N)'];
 E2N = [N,1;E2N];
 
 a = 1; % Wave speed
-CFL = 1; %CFL number of 1
+CFL = 0.8; %CFL number of 1
 d_x = 1./N;
 
 dt = CFL*d_x./abs(a); %Since cell size are uniform, timestep is fixed
@@ -20,10 +20,15 @@ T = 0.5;
 
 %% Forward Euler Stepping
 figure()
+grid on
+xlabel('t')
+ylabel('total u')
 hold on
 u = gaussmf(u_coord,[0.1,0.5]);
 t = 0;
-plot(u_coord,u);
+% plot(u_coord,u,'LineWidth',1.5);
+u_sum_history = [];
+t_history = [];
 while t < T
     %Calculating Residuals
     [Residual] = calculateResidual(u,N,a,E2N,@upwind);
@@ -31,16 +36,20 @@ while t < T
     u = u - dt.*Residual./d_x;
     %Advance in Time
     t = t + dt;
+    t_history = [t_history,t];
+    u_temp = sum(u,'all');
+    u_sum_history = [u_sum_history, u_temp];
 end
-plot(u_coord,u)
-legend('Initial','Final')
-title('Forward Euler Upwind')
+% plot(u_coord,u,'LineWidth',1.5)
+plot(t_history,u_sum_history,'LineWidth',1.5)
 
-figure()
 hold on
 u = gaussmf(u_coord,[0.1,0.5]);
 t = 0;
-plot(u_coord,u);
+u_sum_history = [];
+t_history = [];
+
+% plot(u_coord,u);
 while t < T
     %Calculating Residuals
     [Residual] = calculateResidual(u,N,a,E2N,@central);
@@ -48,18 +57,23 @@ while t < T
     u = u - dt.*Residual./d_x;
     %Advance in Time
     t = t + dt;
+    t_history = [t_history,t];
+    u_temp = sum(u,'all');
+    u_sum_history = [u_sum_history, u_temp];
 end
-plot(u_coord,u)
-legend('Initial','Final')
-title('Forward Euler Central')
+% plot(u_coord,u)
+plot(t_history,u_sum_history,'LineWidth',1.5,'LineStyle','--')
 
 %% Backward Euler Stepping
 %This becomes a root finding problem
-figure() 
+% figure() 
 hold on
 u = gaussmf(u_coord,[0.1,0.5]);
 t = 0;
-plot(u_coord,u);
+% plot(u_coord,u);
+u_sum_history = [];
+t_history = [];
+
 while t < T
     u_guess = u;
     fun = @(u) u + (dt./d_x)*calculateResidual(u,N,a,E2N,@central) - u_guess;
@@ -67,70 +81,75 @@ while t < T
     u = fsolve(fun,u_guess);
     
     t = t + dt;
+    t_history = [t_history,t];
+    u_temp = sum(u,'all');
+    u_sum_history = [u_sum_history, u_temp];
 end
-plot(u_coord,u)
-legend('Initial','Final')
-title('Backward Euler Central')
+% plot(u_coord,u)
+plot(t_history,u_sum_history,'LineWidth',1.5,'LineStyle',':')
 
-figure()
+% figure()
 hold on
 u = gaussmf(u_coord,[0.1,0.5]);
 t = 0;
-plot(u_coord,u);
+% plot(u_coord,u);
+u_sum_history = [];
+t_history = [];
+
 while t < T
     u_guess = u;
     fun = @(u) u + (dt./d_x)*calculateResidual(u,N,a,E2N,@upwind) - u_guess;
-
     u = fsolve(fun,u_guess);
-    
     t = t + dt;
+    t_history = [t_history,t];
+    u_temp = sum(u,'all');
+    u_sum_history = [u_sum_history, u_temp];
 end
-plot(u_coord,u)
-legend('Initial','Final')
-title('Backward Euler Upwind')
+% plot(u_coord,u)
+plot(t_history,u_sum_history,'LineWidth',1.5)
 
 %% Midpoint Rule
-figure()
+% figure()
 hold on
 u = gaussmf(u_coord,[0.1,0.5]);
 t = 0;
-plot(u_coord,u);
+% plot(u_coord,u);
+u_sum_history = [];
+t_history = [];
 
-fun = @central;
 while t < T
-    f_0 = -1/d_x.*calculateResidual(u,N,a,E2N,fun);
-    %Half time step update
-    u_1 = u + 1/2.*dt.*f_0;
-    f_1 = -1/d_x.*calculateResidual(u_1,N,a,E2N,fun);
-    
-    u   = u + dt*f_1;
-
+    u_guess = u;
+    fun = @(u) u + (dt./d_x)*(1/2.*(calculateResidual(u,N,a,E2N,@central) + u_guess)) - u_guess;
+    u = fsolve(fun,u_guess);
     t = t + dt;
+    t_history = [t_history,t];
+    u_temp = sum(u,'all');
+    u_sum_history = [u_sum_history, u_temp];
 end
-plot(u_coord,u)
-legend('Initial','Final')
-title('Midpoint Rule Central')
+% plot(u_coord,u)
+plot(t_history,u_sum_history,'LineWidth',1.5,'LineStyle','--')
 
-figure()
+% figure()
 hold on
 u = gaussmf(u_coord,[0.1,0.5]);
 t = 0;
-plot(u_coord,u);
-
-fun = @upwind;
+% plot(u_coord,u);
+t_history = [];
+u_sum_history = [];
 while t < T
-    f_0 = -1/d_x.*calculateResidual(u,N,a,E2N,fun);
-    %Half time step update
-    u_1 = u + 1/2.*dt.*f_0;
-    f_1 = -1/d_x.*calculateResidual(u_1,N,a,E2N,fun);
-    
-    u   = u + dt*f_1;
-
+    u_guess = u;
+    fun = @(u) u + (dt./d_x)*(1/2.*(calculateResidual(u,N,a,E2N,@upwind) + u_guess)) - u_guess;
+    u = fsolve(fun,u_guess);
     t = t + dt;
+    t_history = [t_history,t];
+    u_temp = sum(u,'all');
+    u_sum_history = [u_sum_history, u_temp];
 end
-plot(u_coord,u)
-legend('Initial','Final')
-title('Midpoint Rule Upwind')
+% plot(u_coord,u)
+plot(t_history,u_sum_history,'LineWidth',1.5,'LineStyle','-.')
+
+legend('Forward Euler Upwind','Forward Euler Central','Backward Euler Central','Backward Euler Upwind','Midpoint Rule Central','Midpoint Rule Upwind')
+
 
 %% Functions Declared
 
