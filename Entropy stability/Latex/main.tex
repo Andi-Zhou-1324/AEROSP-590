@@ -48,10 +48,8 @@
 \maketitle
 
 \section{Entropy Condition - Origin and Formulation}
-\subsection{Origin}
 In this section we explain the entropy condition, and explain why this would be necessary in solving Hyperbolic Partial Differential Equations. To explain the neccesity of entropy condition, we first start but discussing a \textit{single conservation law}.
-\subsection{Single Conservation Law}
-We consider a single conservation law:
+
 \begin{equation} \label{singleConservationLaw}
     u_t + f_x = 0
 \end{equation}
@@ -59,7 +57,7 @@ where $f$ is a non-linear function of $U$, where:
 \begin{equation}
     \frac{df}{du} = a(u)
 \end{equation}
-Using chain rule, we could writhe Equation \ref{singleConservationLaw} as:
+Using chain rule, we could write Equation \ref{singleConservationLaw} as:
 \begin{equation}
     u_t + a(u)u_x = 0
 \end{equation}
@@ -86,17 +84,20 @@ $S$ in the above equation is the speed of discontinuity. In essence, the entropy
 
 \section{Entropy Satisfied Fluxes}
 Several fluxes satisfy the above entropy condition. We understood from Lax [] that any monotone scheme satisfy the entropy condition. In this section we specifically focus on first order scheme, and list two of these fluxes below.
-\subsection{Modified E-O Scheme}
-The E-O scheme, or Engquist and Osher scheme could be considered as a modified version of the Cole-Murman scheme used for small disturbance equation of transonic flow. Engquist and Osher introduced this scheme in a paper publised in 1980 [] and then later generalized this scheme for general hyperbolic systems of conservation laws []. We discuss the formulation of this particular scheme here along with its relevant mathematical proofs.
+
+\subsection{Godunov's Scheme}
+MORE TO BE ADDED
+\subsection{Engquist-Osher Scheme}
+The E-O scheme, or Engquist and Osher scheme could be considered as a modified version of the Cole-Murman scheme used for small disturbance equation of transonic flow.  Engquist and Osher introduced this scheme in a paper publised in 1980 [] and then later generalized this scheme for general hyperbolic systems of conservation laws []. We discuss the formulation of this particular scheme here along with its relevant mathematical proofs.
 \subsubsection{General E-O Algorithm}
 Consider a non-linear scalar conservation law in 1D:
-\begin{equation}
+\begin{equation} 
     w_t + f(w)_x = 0,\\ w(x,t=0) = \Phi(x). \ =\infty < x< \infty
 \end{equation}
 The solution is approximated by a mesh function $w_j^n$ on the mesh ${(x_J,t^n)}$ with $x_j = k \Delta x, t^n = n \Delta t, j = 0, \pm 1,...,n=0,1,...$. In explicit form, the finite difference approximation is defined as:
 \begin{enumerate}
     \item 
-\begin{equation}
+\begin{equation} \label{eq:E-O Conservation Law}
     \begin{split}
         w_j^{n+1} &= w_j^n - \frac{\Delta t}{\Delta x}\left(\Delta_{+} f_{-} (w_j^n) + \Delta_{-} f_{+} (w_j^n) \right) \\
         w_j^0 &= \Phi(x_j), j = 0, \pm 1, \pm 2\\
@@ -108,32 +109,73 @@ The solution is approximated by a mesh function $w_j^n$ on the mesh ${(x_J,t^n)}
         \end{equation}
 
 \end{enumerate}
-
+We denote here as a reminder that Part 1 is the fully-discrete version of Equation \ref{eq:E-O Conservation Law} written is a per cell. We specify here as well the following notations:
+\begin{equation}
+    \begin{split}
+        \Delta_{\pm} w_j &= \pm (w_{j\pm 1} - w_j)\\
+        D_{\pm} w_j &= \frac{1}{\Delta x} \Delta_{\pm} w_j\\
+    \end{split} 
+\end{equation}
 The auxiliary functions $f_+$ and $f_-$ are:
 \begin{equation}
     \begin{split}
-        f_+ (u) &= \int_0^u \mathcal{X} (s) f'(s) dx\\
-        f_- (u) &= \int_0^u (1 - \mathcal{X}(s)) f'(s)ds\\
+        f_+ (w) &= \int_0^w \mathcal{X} (w) f'(w) dw\\
+        f_- (w) &= \int_0^w (1 - \mathcal{X}(w)) f'(w)dw\\
     \end{split}
 \end{equation}
-
 When $f$ is convex, the definitions then reduce to:
 \begin{equation}
     \begin{split}
-        f_+ (u) &= f(\mathrm{max}(u,\tilde{u}))\\
-        f_- (u) &= f(\mathrm{min}(u,\tilde{u})) \\
+        f_+ (w) &= f(\mathrm{max}(w,\bar{w}))\\
+        f_- (w) &= f(\mathrm{min}(w,\bar{w})) \\
     \end{split}
 \end{equation}
-where $\tilde{u}$ is the stagnation or sonic point for which $f'(\tilde{u}) = 0$. 
 
+where $\bar{u}$ is the stagnation or sonic point for which $f'(\bar{u}) = 0$. We make a note that when the sign is positive, Equation \ref{eq:E-O Conservation Law} becomes the \textit{upwind} algorithm. This is also known as \textit{flux decomposition}, where we separated the original upwinding flux into essentially a decreasing and increasing components. Decomposing this flux into different components provides us with a different perspective when looking at states near shock points.
 
+When we consider a hyperbolic PDE with convex flux, we arrive at the following:
+\begin{equation}
+    \begin{split}
+        f^+ (w) &= 
+        \begin{cases}
+            f(w), & w \geq \bar{w}\\
+            f(\bar{w}), & w \leq \bar{w}\\
+        \end{cases}\\
+        f^-(w) &= 
+        \begin{cases}
+            f(w), & w \leq \bar{w} \\
+            f(\bar{w}), & w \geq \bar{w}\\
+        \end{cases}\\
+    \end{split}
+\end{equation}
+If we have Burger's equation, then the flux becomes: $f(u) = \frac{u^2}{2}$:
 
+\begin{equation}
+    \begin{split}
+        f^+ (u) &= 
+        \begin{cases}
+            \frac{u^2}{2}, & u \geq u^*\\
+            0, & u \leq u^*\\
+        \end{cases}\\
+        f^-(u) &= 
+        \begin{cases}
+            \frac{u^2}{2}, & u \leq u^* \\
+            0, & u \geq u^*\\
+        \end{cases}\\
+    \end{split}
+\end{equation}
+If we consider an arbitary, following the notation from Equation \ref{eq:E-O Conservation Law}, we have, 
+\begin{equation}
+    \Delta_- f_+ = f^+(w_j) + f^-({w_{j+1}})
+\end{equation}
+The Engquist and Osher scheme demonstrated computational advantages over all previous schemes including Godunov's and Cole-Murman, especially for implicit calculations where a much large time steps could be taken for E-O. It also elimnates the non-physical expansion shocks (satisfies the entropy condition) that plagues the C-M and Roe's method, and also possesses \textit{smoother} flux functions than that of Godunov's.
 
+\subsubsection{Details on Integration Path}
+TO BE ADDED
+\subsubsection{Proof on E-O Satisfies the Entropy Condition}
+TO BE ADDED
 
-
-
-
-
+\section{The Roe Scheme}
 
 
 
