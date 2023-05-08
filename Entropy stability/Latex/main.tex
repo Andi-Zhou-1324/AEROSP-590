@@ -1,48 +1,121 @@
 \documentclass[a4paper]{article}
 %% Language and font encodings
-\usepackage[english]{babel}
-\usepackage[utf8x]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{comment}
-
-
-%% Sets page size and margins
-\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
-
-%% Useful packages
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{graphicx}
-
-\usepackage{algorithm} 
-\usepackage{algpseudocode} 
-
-
-% For multiple pages in a pdf document
-\usepackage{pdfpages}
-
+\usepackage{graphicx, cite, verbatim, color, amsmath, amssymb}
 \usepackage{listings}
-\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
-\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
-\definecolor{mylilas}{RGB}{170,55,241}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{algorithm}
+\usepackage{algpseudocodex}
 
-\lstset{language=Matlab,%
-    %basicstyle=\color{red},
-    breaklines=true,%
-    morekeywords={matlab2tikz},
-    keywordstyle=\color{blue},%
-    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
-    identifierstyle=\color{black},%
-    stringstyle=\color{mylilas},
-    commentstyle=\color{mygreen},%
-    showstringspaces=false,%without this there will be a symbol in the places where there is a space
-    numbers=left,%
-    numberstyle={\tiny \color{black}},% size of the numbers
-    numbersep=9pt, % this defines how far the numbers are from the text
-    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
-    %emph=[2]{word1,word2}, emphstyle=[2]{style},    
+\setlength{\abovecaptionskip}{2pt}
+\setlength{\belowcaptionskip}{2pt}
+
+% \usepackage{algcompatible}
+\usepackage{subcaption}
+\usepackage{bm}
+\usepackage[compact]{titlesec}
+
+
+%\setlength{\headheight}{0in}
+\setlength{\headsep}{0.3in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\textheight}{8.8in}
+\setlength{\textwidth}{7in}
+\setlength{\oddsidemargin}{-.35in}
+\setlength{\evensidemargin}{-.35in}
+\setlength{\unitlength}{1in}
+
+
+% useful shortcuts/macros
+\newcommand{\be}{\begin{eqnarray}}
+\newcommand{\ee}{\end{eqnarray}}
+\newcommand{\ben}{\begin{eqnarray*}}
+\newcommand{\een}{\end{eqnarray*}}
+\newcommand{\mbf}{\mathbf}
+\newcommand{\mbfv}[1]{\vec{\mathbf{#1}}}
+\newcommand{\sbf}[1]{\boldsymbol{#1}}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\pp}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dd}[2]{\frac{d #1}{d #2}}
+
+% \newcommand{\algmargin}{\the\ALG}
+% \makeatother
+% \newlength{\whilewidth}
+%\settowidth{\whilewidth}{\algorithmicwhile\ }
+%\algdef{SE}[parWHILE]{parWhile}{EndparWhile}[1]
+%  {\parbox[t]{\dimexpr\linewidth-\algmargin}{%
+%     \hangindent\whilewidth\strut\algorithmicwhile\ #1\ \algorithmicdo\strut}}{\algorithmicend\ \algorithmicwhile}%
+%\algnewcommand{\State }[1]{\State%
+%  \parbox[t]{\dimexpr\linewidth-\algmargin}{\strut #1\strut}}
+  
+% abstract formatting
+\RequirePackage[style]{abstract}
+\renewcommand{\abstitlestyle}[1]{}
+\renewcommand{\abstracttextfont}{\bfseries\normalsize}
+\setlength{\absleftindent}{0in}
+\setlength{\absrightindent}{0in}
+
+% caption formatting
+\RequirePackage[tableposition=top]{caption}
+\captionsetup*{font=bf}
+
+% code listing formatting
+\definecolor{commentgreen}{RGB}{14,120,0}
+\lstset{
+  numbers=none, 
+  basicstyle=\scriptsize, 
+  commentstyle=\color{commentgreen},
+  keywordstyle=\bf\color{blue},
+  language=python, 
+  frame=shadowbox,
+  rulesepcolor=\color{black},
+  flexiblecolumns=true,
+  extendedchars=false,
+  showstringspaces=false,
+  keepspaces=true
 }
-\title{AEROSP 590: Entropy Condition}
+
+% packed itemize
+\newenvironment{itemizePacked}{
+\begin{itemize}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+% packed enumerate
+\newenvironment{enumeratePacked}{
+\begin{enumerate}
+  \setlength{\itemsep}{-1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+% no indent
+\setlength{\parindent}{0pt}
+
+% column separation
+\setlength{\columnsep}{3ex}
+
+% header
+\fancyhead[L]{
+\large \sc
+Entropy Stability
+}
+\renewcommand{\headrulewidth}{1pt}
+\pagestyle{fancy}
+
+% section spacing
+\titlespacing{\section}{0pt}{12pt}{4pt}
+\titlespacing{\subsection}{0pt}{8pt}{2pt}
+
+%section numbering for equations 
+\numberwithin{equation}{section}
+\makeatletter
+\@addtoreset{equation}{section}
+\makeatother
+\title{AEROSP 590: Entropy Stability}
 \author{Andi Zhou}
 \begin{document}
 \maketitle
@@ -82,11 +155,34 @@ we also arrive at the \textit{Lax entropy condition}:
 \end{equation}
 $S$ in the above equation is the speed of discontinuity. In essence, the entropy condition defines that characteristic line should ALWAYS run into the shock, not away from it. 
 
-\section{Entropy Satisfied Fluxes}
+\section{Entropy Satisfied Schemes}
 Several fluxes satisfy the above entropy condition. We understood from Lax [] that any monotone scheme satisfy the entropy condition. In this section we specifically focus on first order scheme, and list two of these fluxes below.
 
-\subsection{Godunov's Scheme}
-MORE TO BE ADDED
+\subsection{Lax-Friedrich's Scheme}
+The Lax-Friedrich scheme, under a specific CFL number, satisfies the entropy condition. The scheme is introduced by Lax in 1954 as a method of discretizing the first order hyperbolic equation without violating the entropy condition introduced in the above section. We introduce the general scheme below, and demonstrate that it is actually a FTCS (forward in time, centered in space) scheme with the temporal derivative replaced by a spatial average of the neighboring points. 
+\subsubsection{General Lax-Friedrich Algorithm}
+The general Lax-Friedrich discretization is as follow:
+\begin{equation}
+    \begin{split}
+        u_t &= \frac{1}{\Delta t}\left( u^{n+1}_j - \frac{u^n_{j-1} + u^n_{j+1}}{2} \right)  \\
+        f_x &= \frac{1}{2\Delta x}\left(f(u^n_{j+1}) - f(u^n_{j-1})\right)
+    \end{split}
+\end{equation}
+Combined together, we obtain the Lax-Friedrich scheme:
+\begin{equation}
+    \begin{split}
+        &\frac{1}{\Delta t}\left( u^{n+1}_j - \frac{u^n_{j-1} + u^n_{j+1}}{2} \right) + \frac{1}{2\Delta x}\left(f(u^n_{j+1}) - f(u^n_{j-1})\right) = 0 \\
+        &u_j^{n+1} = \frac{1}{2}(u_{i+1}^n + u_{i-1}^n) - \frac{\Delta t}{2\Delta x}\left(f(u^n_{j+1}) - f(u^n_{j-1})\right)
+    \end{split}
+\end{equation}
+We note that the above scheme is essentialy FTCS:
+\begin{equation}
+    u_j^{n+1} = \underbrace{\frac{1}{2}(u_{i+1}^n + u_{i-1}^n)}_{\text{Temporal Derivative}} - \underbrace{\frac{\Delta t}{2\Delta x}\left(f(u^n_{j+1}) - f(u^n_{j-1})\right)}_{\text{Spatial derivative (Centered in Space)}}
+\end{equation}
+According to Lax[], the Lax-Friedrich scheme satisfies the entropy condition under a suitable choice of the $\lambda = \frac{\Delta t}{\Delta x}$.
+
+\subsubsection{Proof on Lax-Friedrich Satisfies the Entropy Condition}
+
 \subsection{Engquist-Osher Scheme}
 The E-O scheme, or Engquist and Osher scheme could be considered as a modified version of the Cole-Murman scheme used for small disturbance equation of transonic flow.  Engquist and Osher introduced this scheme in a paper publised in 1980 [] and then later generalized this scheme for general hyperbolic systems of conservation laws []. We discuss the formulation of this particular scheme here along with its relevant mathematical proofs.
 \subsubsection{General E-O Algorithm}
@@ -170,12 +266,196 @@ If we consider an arbitary, following the notation from Equation \ref{eq:E-O Con
 \end{equation}
 The Engquist and Osher scheme demonstrated computational advantages over all previous schemes including Godunov's and Cole-Murman, especially for implicit calculations where a much large time steps could be taken for E-O. It also elimnates the non-physical expansion shocks (satisfies the entropy condition) that plagues the C-M and Roe's method, and also possesses \textit{smoother} flux functions than that of Godunov's.
 
-\subsubsection{Details on Integration Path}
-TO BE ADDED
 \subsubsection{Proof on E-O Satisfies the Entropy Condition}
 TO BE ADDED
 
 \section{The Roe Scheme}
+Professor Philip Roe first introduced the Roe scheme in 1980 in his paper \textit{Approximate Riemann Solvers, Parameter Vectors, and Difference Scheme} []. In his paper, Roe argued that an exact solution to the Riemann problem may not be necessary and we could construct an \textit{approximate} solutions which are the \textit{exact} solutions to an approximate problem. This is the motive behind the \textit{Roe's Average}. 
+\subsection{Roe's Average}
+Consider again the one-dimensional linear advection equation:
+\begin{equation}
+    u_t + au_x = 0
+\end{equation}
+where we construct an approximate version:
+\begin{equation}
+    \mathbf{u}_t + \tilde{A}\mathbf{u}_x = 0
+\end{equation}
+where $\tilde{A}$ is to be chosen such that it satisfies the \textit{local} conditions, i.e based on $A_L$ and $A_R$. The intuitive candidates are, of course:
+\begin{equation}
+    \begin{split}
+        \tilde{A} &= \frac{1}{2}(A_L + A_R)\\
+        \tilde{A} &= A(\frac{1}{2}(\mathbf{u}_L + \mathbf{u}_R))\\
+    \end{split}
+\end{equation}
+However, Roe listed out the following properties that the matrix $\tilde{A}$ has to satisfy:
+\begin{enumerate}
+    \item Linear mapping from the vector space $\mathbf{u}$ to the vector space $\mathbf{F}$
+    \item As $\mathbf{u}_L \rightarrow \mathbf{u}_R \rightarrow \mathbf{u}, \tilde{A}(\mathbf{u}_L,\mathbf{u}_R) \rightarrow A(\mathbf{u})$ where $A = \frac{\partial \mathbf.
+    F}{\partial \mathbf{u}}$. In words, the approximate Jacobian $\tilde{A}$ must match with the exact Jacobian $A$ as $\mathbf{u}_L$ and $\mathbf{u}_R$ approaches $\mathbf{u}$
+    \item For any $\mathbf{u}_L, \mathbf{u}_R, \tilde{A}(\mathbf{u}_L, \mathbf{u}_R)\times (\mathbf{u}_L - \mathbf{u}_R) = \mathbf{F}_L - \mathbf{F}_R$. In words, conservation must be satisfied.
+    \item The eignvectors of $\tilde{A}$ are linearly independent, which means thats the PDE has to be \textit{hyperbolic}.
+
+\end{enumerate}
+The above conditions are named Property U, as they are intended to possess uniform validity across discontinuities. In addition, matrix $\tilde{A}$ is sometimes called \textit{Roes's matrix}. It is to be noted that none of the suggestions for $\tilde{A}$ above satisfies the third property. 
+
+We then follow that the matrix $\tilde{A}$ could be constructed from mean value theorems which would arrive at the following:
+\begin{equation}
+    \tilde{A} = \int_0^1 A(\theta) d \theta
+\end{equation}
+where $\theta$ is a parameter that vary linearly between 0 and 1 along a straight path connecting each state. By choosing a suitable integration path, candidates for $A$ that is closed and cheap to compute could be found. We could then have the following formula based on $\tilde{A}$:
+\begin{equation} \label{Roe's Integral}
+    F_j(\mathbf{u}_L) - F_j(\mathbf{u}_R) = \sum_i \tilde{a}_{ij} \left[(u_i)_L - (u_i)_R\right]
+\end{equation} 
+where $a_ij$ is the matrix entries into $\tilde{A}$. The $\tilde{a}_{ij}$ satisfies the first amd third conditions of Property U.
+
+However, the primary disadvantage of the above construction lies in that the matrix is far from unique, and the resulting formulae for eigenvalues and eigenvectors are sometimes quite cumbersome. For Euler's equation, however, the above formulae simplifies greatly due to Euler's homogenity characteristic. 
+
+\subsection{Roe's Scheme for Euler's Equation}
+For Euler's compressible flow equation (or polytropic ideal gases), Roe introduced a change of variable:
+\begin{equation}
+    \mathbf{w} = \rho^{1/2}(1,u,v,w,H)^T
+\end{equation}
+which allow us to easily integrate and satisfy the Equation \ref{Roe's Integral}. We introduce two equations:
+\begin{equation}
+    \begin{split}
+        \left(\mathbf{u}_L - \mathbf{u}_R\right) &= \tilde{B}(\mathbf{w}_L - \mathbf{w}_R)\\
+        \left(\mathbf{F}_L - \mathbf{F}_R\right) &= \tilde{C}(\mathbf{w}_L - \mathbf{w}_R)\\
+    \end{split}
+\end{equation}
+where the first equation provides a link for $\mathbf{w}$ in terms of $\mathbf{u}$. Then, through the new change of variables conducted we could write the following $\tilde{B}$ and $\tilde{C}$ matrix:
+\begin{equation}
+    \begin{split}
+        \tilde{B} &=
+        \begin{pmatrix}
+            2 \bar{\mathrm{w}}_1 & 0 & 0 & 0 & 0\\
+            \bar{\mathrm{w}}_2 & \bar{\mathrm{w}}_1 & 0 & 0 & 0\\
+            \bar{\mathrm{w}}_3 & 0 & \bar{\mathrm{w}}_1 & 0 & 0\\
+            \bar{\mathrm{w}}_4 & 0 & 0 &\bar{\mathrm{w}}_1 & 0 \\
+           \frac{\bar{\mathrm{w}}_5}{\gamma} & \frac{\gamma - 1}{\gamma}\bar{\mathrm{w}}_2 & \frac{\gamma - 1}{\gamma }\bar{\mathrm{w}}_3 & \frac{\gamma - 1}{\gamma} \bar{\mathrm{w}}_4 & \frac{\bar{\mathrm{w}}_1}{\gamma}
+        \end{pmatrix} \\
+        \tilde{C} &= 
+        \begin{pmatrix}
+            \bar{\mathrm{w}}_2 & \bar{\mathrm{w}}_1 & 0 & 0 & 0\\
+            \frac{\gamma - 1}{\gamma}\bar{\mathrm{w}}_5 & \frac{\gamma - 1}{\gamma}\bar{\mathrm{w}}_2 & -\frac{\gamma - 1}{\gamma}\bar{\mathrm{w}}_3 & -\frac{\gamma - 1}{\gamma} \bar{\mathrm{w}}_4 & \frac{\gamma - 1}{\gamma} \bar{\mathrm{w}}_1\\
+            0 & \bar{\mathrm{w}}_3 & \bar{\mathrm{w}}_2 & 0 & 0\\
+            0 & \bar{\mathrm{w}}_4 & 0 & \bar{\mathrm{w}}_2 & 0\\
+            0 & \bar{\mathrm{w}}_5 & 0 & 0 & \bar{\mathrm{w}}_2\\
+        \end{pmatrix}
+    \end{split}
+\end{equation}
+The $\bar{\cdot}$ indicates the arithmatic average of the selected quanitites. We then obtain $\tilde{A}$ via:
+\begin{equation}
+    \tilde{A} = \tilde{C}\tilde{B}^{-1}
+\end{equation}
+In the process of providing an analytical equation for both the eigenvalues and eigenvectors, Roe then introduced a different form of averaging for ease of convention:
+\begin{equation}
+    u = \frac{\rho^{1/2}_L u_L + \rho^{1/2}_R u_R}{\rho_L^{1/2} + \rho_R^{1/2}} = \frac{\bar{\mathrm{w}}_2}{\bar{\mathrm{w}}_1}
+\end{equation}
+We could also follow similar convention for:
+\begin{equation}
+    v = \frac{\bar{\mathrm{w}}_3}{\bar{\mathrm{w}}_1}, \ w = \frac{\bar{\mathrm{w}}_4}{\bar{\mathrm{w}}_1}, \ H = \frac{\bar{\mathrm{w}}_5}{\bar{\mathrm{w}}_1}
+\end{equation}
+The above relations are known as the Roe average, in which Roe derived on obtaining a solution to the linearized Riemann problem. It is to be noted that $\tilde{A}$ is equal to the original matrix $A$ when evaluated with the Roe averaged states above. 
+
+\section{Tadmor's Entropy Stability Criterion}
+Eitan Tadmor, in his paper written in 1987, introduced a new, general, criterion capable of evaluating entropy conservation of different numerical fluxes. This section summarizes his paper and the two main theorems that he proposed:
+\begin{enumerate}
+    \item Entropy conservation by means of comparison
+    \item Three-point conservative schemes are entropy stable if and only if they contain \textit{more} viscosity than their entropy conservative equivalent
+\end{enumerate}
+We focus on the derivation and discussion for the first theorem and briefly states the second.
+\subsection{Tadmor's Entropy Stability Criterion}
+We again consider a one-dimensional conservation law:
+\begin{equation}
+    \frac{\partial}{\partial t} \mathbf{u} + \frac{\partial}{\partial x}\left[\mathbf{f(u)}\right] = 0
+\end{equation}
+and we introduce the entropy function $U(u)$, a \textit{convex} function of $u$ along with the entropy flux $F(u)$, which is also a convex function of $u$. We recall the entropy condition:
+\begin{equation}\label{eq:EntrpyInequality}
+    \frac{\partial V}{\partial t} + \frac{\partial G}{\partial x} \leq 0
+\end{equation}
+where:
+\begin{equation}
+    V(\mathbf{v}) = U(\mathbf{u(v)}), \ G(\mathbf{v}) = F(\mathbf{u(v)})
+\end{equation}
+We also introduce the entropy variable:
+\begin{equation}
+    \mathbf{v} = \mathbf{v(u)} = \frac{\partial \mathbf
+    U}{\partial \mathbf{u}}(\mathbf{u})
+\end{equation}
+which is one-to-one mapping to $\mathbf{u}(\mathbf{v})$ due to the convexity of $U$. We could then write the conservation equation as follow:
+\begin{equation} \label{eq:EntopyConservationEquation}
+    \frac{\partial}{\partial t}\left[\mathbf
+    u(\mathbf
+    v)\right] + \frac{\partial}{\partial x}\left[\mathbf
+    g(\mathbf
+    v)\right] = 0, \ \mathbf{g(v)} = \mathbf{f}(\mathbf{u}(\mathbf{
+    v}))
+\end{equation}
+We discretize Equation \ref{eq:EntopyConservationEquation} and \ref{eq:EntrpyInequality} and have the following:
+\begin{equation} \label{eq:EntropySystem}
+    \begin{split}
+        &\frac{d}{dt} \left[\mathbf{u}(\mathbf{v_v}(t))\right] = -\frac{1}{\Delta x}\left[\mathbf
+        {g}_{\nu+1/2} - \mathbf{g}_{\nu-1/2}\right]\\
+        &\frac{d}{dt} V(\mathbf{v_\nu}(t)) + \frac{1}{\Delta x}\left[G_{\nu + 1/2} - G_{\nu - 1/2}\right] \leq 0 \\
+    \end{split}
+\end{equation}
+which are the conservation equation along with its respective entropy inequality. Our end goal is \textit{entropy conservative} schemes, in which only the eqiality hold in Equation \ref{eq:EntrpyInequality}. We multply the first equation of Equation \ref{eq:EntropySystem} by the entropy variable by $\mathbf{v}_\nu^T(t) = U_\mathbf{u}^T(\mathbf{u_\nu(t)})$, which we obtain the following:
+\begin{equation}\label{eq:Convert1}
+    \frac{d}{dt}V(\mathbf{v}_\nu(t)) = \frac{d}{dt} U(\mathbf{u}_\nu(t)) = -\frac{1}{\Delta x} \mathbf{v}_\nu^T \left[\mathbf{g}_{\nu + 1/2} - \mathbf{g}_{\nu - 1/2}\right]
+\end{equation}
+which we could subsitute into the entropy condition and have the following equality. The expression:
+\begin{equation}\label{eq:Convert2}
+    \mathbf{v}_\nu^T \left[\mathbf{g}_{\nu + 1/2} - \mathbf{g}_{\nu - 1/2} \right] = \mathbf{G}_{\nu + 1/2} - \mathbf{G}_{\nu - 1/2}
+\end{equation}
+is conservative if and only if:
+\begin{equation}\label{eq:Tadmor'sEntropyCriteria}
+    \Delta \mathbf{v}_{\nu + 1/2}^T \mathbf{g}_{\nu + 1/2} = \Psi_{\nu + 1} - \Psi_\nu, \ \Delta \mathbf{v}_{\nu + 1/2} = \mathbf{v_{\nu + 1}} - \mathbf{v}_\mathbf{\nu}
+\end{equation}
+This is Tadmor's entropy stability criterion. $\mathbf{g}_{\nu + 1/2}$ could be taken as any numerical flux, while for Euler's equation in 1D:
+\begin{equation}
+    \begin{split}
+        \mathbf{v} &= 
+        \begin{pmatrix}
+            \frac{\gamma - S}{\gamma - 1}-\frac{\rho u^2}{2p} \\
+            \frac{m}{p}\\
+            -\frac{\rho}{p}
+        \end{pmatrix}\\
+        \Psi &= \rho u
+    \end{split}
+\end{equation} 
+Tadmor's new criterion is different in that the amount of numerical viscosity present is essentially \textit{quanitified} and is then later used for Entropy stability evaluation. In addition, it is to be noted that Tadmor's criterion is extremely general, which means that it could be applied to any numerical flux. Any flux could be tested for its entropy conservation by directly substituting the relevant variables and fluxes into Equation \ref{eq:Tadmor'sEntropyCriteria}.
+\subsection{Tadmor's Second Theorem}
+In [], Tadmor only proved entropy conservation (i.e Entropy is equal across a cell interface), not stability. He later extended his idea to essentially three-point scheme and proved that: \textit{A conservative scheme which contains more numerical viscosity than that present in the entropy conservative one is entropy stable}. 
+
+Essentially, we consider three points schemes that could be written in the following viscosity form:
+\begin{equation} \label{eq:EntropyConservedScheme_Viscosity_form}
+    \frac{d}{dt}\left[\mathbf(
+    u(\mathbf{v_\nu}(t)))\right] = - \frac{1}{2\Delta x} \left[\mathbf
+    {g}(\mathbf{v_{\nu+1}}) - \mathbf{g}(\mathbf{v_{\nu-1}})\right] + \frac{1}{2\Delta x} \left[Q_{\nu + 1/2} \Delta \mathbf{v}_{\nu+1/2} - Q_{\nu + 1/2} \Delta \mathbf{v}_{\mathbf{v}-1/2}\right]
+\end{equation}
+Where $Q_{\mathbf{v}+1/2}$ is referred to as the numerical viscosity coefficient matrix. We note that the class of three-point schemes includes second-prder accurate TVD schemes such as the High-Resolution Osher flux and a number of other schemes [][]. We then introduce a new variable:
+\begin{equation}
+    D_{\nu + 1/2} = Q_{\nu + 1/2} - Q_{\nu + 1/2}^*
+\end{equation}
+which denote the deviation of its viscosity from that of the entropy conservative scheme, which we then have:
+\begin{equation}
+    \frac{d}{dt}\left[\mathbf(
+    u(\mathbf{v_\nu}(t)))\right] = - \frac{1}{2\Delta x} \left[\mathbf
+    {g}(\mathbf{v_{\nu+1}}) - \mathbf{g}(\mathbf{v_{\nu-1}})\right] + \frac{1}{2\Delta x} \left[D_{\nu + 1/2} \Delta \mathbf{v}_{\nu+1/2} - D_{\nu + 1/2} \Delta \mathbf{v}_{\mathbf{v}-1/2}\right]
+\end{equation}
+We could also rewrite the above equation in the form of entropy condition (as per last section), following essentially the same step as outlined in Equation \ref{eq:Convert1} and Equation \ref{eq:Convert2} and use identities outlined in [] to obtain the following:
+\begin{equation}
+    \begin{split}
+        \frac{d}{dt} V(\mathbf{v}_\nu(t)) + \frac{1}{\Delta x}\left[G_{\nu + 1/2} - G_{\nu - 1/2}\right] = -\frac{1}{4\Delta x} \left[\Delta \mathbf{v}_{\nu+1/2}^T D_{\nu + 1/2} \Delta \mathbf{v}_{\nu+1/2} - \Delta \mathbf{v}_{\nu-1/2}^T D_{\nu - 1/2} \Delta \mathbf{v}_{\nu-1/2}\right]
+    \end{split}
+\end{equation}
+We observe that if the scheme is considered to contain more viscosity, then $D$ would be positive, and the overall right hand side of the above equation remains \textit{negative}, which then leads to the entropy condition being satisfied (Equation \ref{eq:EntropySystem}). This theorem allows us to tune additional numerical viscosity such that both entropy stability and second order accuracy could be obtained.
+
+
+
+
+
+
 
 
 
