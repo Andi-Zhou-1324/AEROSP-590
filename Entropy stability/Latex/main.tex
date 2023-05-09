@@ -121,46 +121,114 @@ Entropy Stability
 \maketitle
 
 \section{Entropy Condition - Origin and Formulation}
-In this section we explain the entropy condition, and explain why this would be necessary in solving Hyperbolic Partial Differential Equations. To explain the neccesity of entropy condition, we first start but discussing a \textit{single conservation law}.
+In this section we explain the entropy condition, and explain why this would be necessary in solving Hyperbolic Partial Differential Equations. To explain the neccesity of entropy condition, we first start but discussing a typical conservation law.
 
 \begin{equation} \label{singleConservationLaw}
-    u_t + f_x = 0
+    \partial_t u^j + \partial_x f^j = 0
 \end{equation}
 where $f$ is a non-linear function of $U$, where:
 \begin{equation}
     \frac{df}{du} = a(u)
 \end{equation}
 Using chain rule, we could write Equation \ref{singleConservationLaw} as:
-\begin{equation}
+\begin{equation}\label{singleConservationLaw_wavespeed}
     u_t + a(u)u_x = 0
 \end{equation}
-If $u$ is constant along a characteristic trajectory, we also know that $a$ will be constant as well. $u$ would propagate along space in speed $a$. Therefore, we also define $a$ as the signal speed. The trajectories of $u$ would be defined as a characteristics. Equation \ref{singleConservationLaw} is known as the strong (differential) form of the PDE, where a solution to this equation would need to satisfy the differential operators at all points in space and time. A solution that matches the strong form is known as the a strong solution. However, the differential form could not admit discontinuities. We now consider the weak form:
-
+If $u$ is constant along a characteristic trajectory, we also know that $a$ will be constant as well. $u$ would propagate along space in speed $a$. Therefore, we also define $a$ as the signal speed. The trajectories of $u$ would be defined as a characteristics. Equation \ref{singleConservationLaw} is known as the strong (differential) form of the PDE, where a solution to this equation would need to satisfy the differential operators at all points in space and time. A solution that matches the strong form is known as the a strong solution. However, the differential form could not admit discontinuities. Consider, for example, the inviscid Burger's equation:
 \begin{equation}
+    \partial_t u + u \partial_x u = 0
+\end{equation}
+Where now the wavespeed depends upon the state $a(u) = u$. If we draw the characteristic curve of the Burger's equation subject to a Gaussian initial condition, we would find that the characteristic lines may eventually intersect at one point (Figure \ref{BurgerEquationFigure}). 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{fig/BurgersCharacteristic.png}
+    \caption{Example characteristic curve of Burger's equation}
+    \label{BurgerEquationFigure}
+\end{figure}
+The above figure is subjected to the following initial condition:
+\begin{equation}
+    u(x,0) = 
+    \begin{cases}
+        \sin^2 (\pi x) & 0 \leq x \leq 1 \\
+        0 & 1 \leq x \leq 2
+    \end{cases}
+\end{equation}
+We see that due to the difference the state, the slope ($1/a$) varies across the domain which causes characteristic lines to intersect each other. At the point of intersection, then, there exists two states, which represents a discontinuity. This is impossible when considering the strong form (Equation \ref{singleConservationLaw}). Then, we require a different formulation of the above conservation law.
+\subsection{The Weak Form of Conservation Law}
+We now consider the weak form:
+
+\begin{equation}\label{eq:integralConservationLaw}
     \int_{0}^{\infty} \int_{-\infty}^{\infty} \left[w_t u + w_x f(u) \right] dx dt + \int_{\infty}^\infty w(x,0) \phi(x) dx = 0
 \end{equation}
 where $w$ is any smooth test function with compact support (non-zero only within the specified element). The general idea of weak solution is that we could rewrite the derivatives of $u$ as derivatives of compact test function $w$. From this, we basically eliminated the need for solution to be continuous. However, for hyperbolic systems (which we are interested in), the notion of weak solution \textbf{does not} guarantee uniqueness. Therefore, we need some sort of criterions to select a solution that is \textit{physical}. We then have the \textbf{entropy} condition. 
 
-It is rather difficult to trace when the notion of entropy condition was first introduced. Earliest written work that could be traced on this subjects were done by P. Lax [citation] and O. Oleinik [citation]. Both authors have mentioned the idea of \textit{entropy conditions} repeatedly in their text. Oleinik [citation needed] has shown that physically relevant solutions must have the following properties:
+In order to better study the region of discontinuity, we turn to Equation \ref{singleConservationLaw} and add a term of dissipation at the end:
+\begin{equation} \label{eq:artificial_viscosity}
+   u_t + f_x = \epsilon u_{xx}
+\end{equation}
+The term on the right hand side is also known as artificial viscosity. This allows us to identify relevant solutions as limits of solutions of equations with some dissipation. As $\epsilon \rightarrow 0$, the solution would tend towards Equation \ref{singleConservationLaw} in a \textit{weak} sense. 
+
+Now, we consider a convex function $U(u)$ that is a function $u$ and its corresponding convex flux $F(u)$. We assume that these convex function also satisfy a separate form of conservation law:
+\begin{equation}
+    U_t + F_x = 0
+\end{equation}
+
+Again from [], we understand that if the convex function $U$ satisfies a conservation law then multiplying the system by $U_j$, would put the system into \textit{symmetric hyperbolic form}.
+
+We use the above theorem, and we multiply Equation \ref{eq:artificial_viscosity} by $U_j$, and we arrive at the following:
+\begin{equation}
+    \partial_t U + \partial_x F = \epsilon \sum U_j u^j_{xx}
+\end{equation}
+
+Lax introduced the following identity:
+\begin{equation}
+    \partial_x^2 U = \sum U_j \partial_x^2 u^j + \sum U_{jk} \partial_x u^j \partial_x u^k
+\end{equation}
+From above, we could deduce that:
+\begin{equation}
+    \partial_x^2 U \geq \sum U_j \partial_x^2 u^j
+\end{equation}
+Since we know that $\epsilon > 0$ in Equation \ref{eq:artificial_viscosity}, we could use the above equation estimate the right side:
+\begin{equation}
+    \partial_t U + \partial_x F \leq \epsilon \partial_x^2 F
+\end{equation}
+Take $\epsilon \rightarrow 0$, we then recover the entropy condition:
+\begin{equation}
+    \partial_t U + \partial_x F \leq 0
+\end{equation}
+
+We note that, if $u$ is a piecewise continous solution to Equation \ref{singleConservationLaw}, we could arrive at the following assuming we are at a point of discontinuity:
+\begin{equation}
+    s \left[U\right] - \left[F\right] \leq 0
+\end{equation}
+where $s$ is the speed of the discontinuity while $\left[\cdot\right]$ denotes jump in the respective quantity across the discontinuity. The above relation is analogous to the Rankine-Hugoniot jump relation:
+\begin{equation}
+    s \left[u^j\right] - \left[f^j\right] = 0
+\end{equation}
+We could actually rewrite the entropy condition as follow:
 \begin{equation}
     \frac{f(u) - f(u_L)}{u-u_L} \geq S \geq \frac{f(u) - f(u_R)}{u-u_R}
 \end{equation}
-This is known by Oleinik as \textit{Condition E}. If we use the Rankine-Hugoniot jump relation:
+This is known by Oleinik[] as \textit{Condition E}. If we use the Rankine-Hugoniot jump relation:
 \begin{equation}
     f(u_R) - f(u_L) = S(u_R - u_L)
 \end{equation}
-we also arrive at the \textit{Lax entropy condition}:
+we also arrive at the \textit{Lax entropy condition} []:
 \begin{equation}
     a(u_l) > S > a(u_r)
 \end{equation}
-$S$ in the above equation is the speed of discontinuity. In essence, the entropy condition defines that characteristic line should ALWAYS run into the shock, not away from it. 
+%%Commented it out just cuz
+\begin{comment}
+It is rather difficult to trace when the notion of entropy condition was first introduced. Earliest written work that could be traced on this subjects were done by P. Lax [citation] and O. Oleinik [citation]. Both authors have mentioned the idea of \textit{entropy conditions} repeatedly in their text. 
+\end{comment}
 
+
+%----------------------------------------
 \section{Entropy Satisfied Schemes}
 Several fluxes satisfy the above entropy condition. We understood from Lax [] that any monotone scheme satisfy the entropy condition. In this section we specifically focus on first order scheme, and list two of these fluxes below.
 
 \subsection{Lax-Friedrich's Scheme}
 The Lax-Friedrich scheme, under a specific CFL number, satisfies the entropy condition. The scheme is introduced by Lax in 1954 as a method of discretizing the first order hyperbolic equation without violating the entropy condition introduced in the above section. We introduce the general scheme below, and demonstrate that it is actually a FTCS (forward in time, centered in space) scheme with the temporal derivative replaced by a spatial average of the neighboring points. 
-\subsubsection{General Lax-Friedrich Algorithm}
 The general Lax-Friedrich discretization is as follow:
 \begin{equation}
     \begin{split}
@@ -181,11 +249,20 @@ We note that the above scheme is essentialy FTCS:
 \end{equation}
 According to Lax[], the Lax-Friedrich scheme satisfies the entropy condition under a suitable choice of the $\lambda = \frac{\Delta t}{\Delta x}$.
 
-\subsubsection{Proof on Lax-Friedrich Satisfies the Entropy Condition}
+The Lax-Friedrich scheme satisfies the entropy condition as long as the $\lambda = \frac{\Delta t}{\Delta x}$ satisfies the following criterion:
+\begin{equation}
+    c\lambda \leq \sqrt{1+m/M-1}
+\end{equation}
+where $M$ and $m$ are the minimum and maximum eigenvalues of the entropy function Jacobian $\frac{\partial^2}{\partial^2 u}U$ and $c$ denotes the norm of the entropy function derivative $\frac{\partial}{\partial u} U$. The complete proof is presented in section 1 of []. The above inequality could also be transformed in terms of the Courant-Friedrich-Lewy (CFL) number, where the scheme is entropy stable if:
+\begin{equation}
+    CFL = \frac{a \Delta t}{\Delta x} \leq 1
+\end{equation}
+where for a $CFL \leq 1$, the Lax-Friedrich scheme is monotone, which satisfies the entropy condition according to Lax [].
 
+
+%---------------------------------------------------------
 \subsection{Engquist-Osher Scheme}
 The E-O scheme, or Engquist and Osher scheme could be considered as a modified version of the Cole-Murman scheme used for small disturbance equation of transonic flow.  Engquist and Osher introduced this scheme in a paper publised in 1980 [] and then later generalized this scheme for general hyperbolic systems of conservation laws []. We discuss the formulation of this particular scheme here along with its relevant mathematical proofs.
-\subsubsection{General E-O Algorithm}
 Consider a non-linear scalar conservation law in 1D:
 \begin{equation} 
     w_t + f(w)_x = 0,\\ w(x,t=0) = \Phi(x). \ =\infty < x< \infty
@@ -199,7 +276,7 @@ The solution is approximated by a mesh function $w_j^n$ on the mesh ${(x_J,t^n)}
         w_j^0 &= \Phi(x_j), j = 0, \pm 1, \pm 2\\
     \end{split}
 \end{equation}
-    \item
+    \item \label{eq:E-O_CFL}
         \begin{equation}
             \frac{\Delta t}{\Delta x} \text{sup} |f'| < 1
         \end{equation}
@@ -266,9 +343,9 @@ If we consider an arbitary, following the notation from Equation \ref{eq:E-O Con
 \end{equation}
 The Engquist and Osher scheme demonstrated computational advantages over all previous schemes including Godunov's and Cole-Murman, especially for implicit calculations where a much large time steps could be taken for E-O. It also elimnates the non-physical expansion shocks (satisfies the entropy condition) that plagues the C-M and Roe's method, and also possesses \textit{smoother} flux functions than that of Godunov's.
 
-\subsubsection{Proof on E-O Satisfies the Entropy Condition}
-TO BE ADDED
+The E-O scheme is \textit{monotone} if the CFL condition (Equation \ref{eq:E-O_CFL}) is valid[]. Lax proved in [] that monotone schemes always satisfy the entropy condition and converge to a physically relevant solution. From this theorem, we then know that E-O scheme is entropy stable if the CFL condition if Equation \ref{eq:E-O_CFL} is satisfied.
 
+%----------------------------------------------------------------------
 \section{The Roe Scheme}
 Professor Philip Roe first introduced the Roe scheme in 1980 in his paper \textit{Approximate Riemann Solvers, Parameter Vectors, and Difference Scheme} []. In his paper, Roe argued that an exact solution to the Riemann problem may not be necessary and we could construct an \textit{approximate} solutions which are the \textit{exact} solutions to an approximate problem. This is the motive behind the \textit{Roe's Average}. 
 \subsection{Roe's Average}
@@ -356,7 +433,7 @@ We could also follow similar convention for:
     v = \frac{\bar{\mathrm{w}}_3}{\bar{\mathrm{w}}_1}, \ w = \frac{\bar{\mathrm{w}}_4}{\bar{\mathrm{w}}_1}, \ H = \frac{\bar{\mathrm{w}}_5}{\bar{\mathrm{w}}_1}
 \end{equation}
 The above relations are known as the Roe average, in which Roe derived on obtaining a solution to the linearized Riemann problem. It is to be noted that $\tilde{A}$ is equal to the original matrix $A$ when evaluated with the Roe averaged states above. 
-
+%%-----------------------------------------------------------------------------------
 \section{Tadmor's Entropy Stability Criterion}
 Eitan Tadmor, in his paper written in 1987, introduced a new, general, criterion capable of evaluating entropy conservation of different numerical fluxes. This section summarizes his paper and the two main theorems that he proposed:
 \begin{enumerate}
@@ -364,6 +441,8 @@ Eitan Tadmor, in his paper written in 1987, introduced a new, general, criterion
     \item Three-point conservative schemes are entropy stable if and only if they contain \textit{more} viscosity than their entropy conservative equivalent
 \end{enumerate}
 We focus on the derivation and discussion for the first theorem and briefly states the second.
+
+%%-----------------------------------------------------------------------------------
 \subsection{Tadmor's Entropy Stability Criterion}
 We again consider a one-dimensional conservation law:
 \begin{equation}
@@ -424,6 +503,9 @@ This is Tadmor's entropy stability criterion. $\mathbf{g}_{\nu + 1/2}$ could be 
     \end{split}
 \end{equation} 
 Tadmor's new criterion is different in that the amount of numerical viscosity present is essentially \textit{quanitified} and is then later used for Entropy stability evaluation. In addition, it is to be noted that Tadmor's criterion is extremely general, which means that it could be applied to any numerical flux. Any flux could be tested for its entropy conservation by directly substituting the relevant variables and fluxes into Equation \ref{eq:Tadmor'sEntropyCriteria}.
+
+
+%---------------------------------------------------------------------------------
 \subsection{Tadmor's Second Theorem}
 In [], Tadmor only proved entropy conservation (i.e Entropy is equal across a cell interface), not stability. He later extended his idea to essentially three-point scheme and proved that: \textit{A conservative scheme which contains more numerical viscosity than that present in the entropy conservative one is entropy stable}. 
 
@@ -451,13 +533,109 @@ We could also rewrite the above equation in the form of entropy condition (as pe
 \end{equation}
 We observe that if the scheme is considered to contain more viscosity, then $D$ would be positive, and the overall right hand side of the above equation remains \textit{negative}, which then leads to the entropy condition being satisfied (Equation \ref{eq:EntropySystem}). This theorem allows us to tune additional numerical viscosity such that both entropy stability and second order accuracy could be obtained.
 
+\section{Roe's Entropy Conservative Flux}
+In 2006, building on top of Tadmor's theorems presented above, Roe made key contribution in Entropy stable fluxes [] by presenting an \textit{entropy conservative} flux that could be made \textit{stable} via upwinding. In this section, we summarize Roe's contribution and discuss his findings.
 
+\subsection{Entropy Production}
+From Tadmor, we know that entropy production across an interface could be characterized by the following equation:
+\begin{equation}
+    \Delta \mathbf{v}_{\nu + 1/2}^T \mathbf{g}_{\nu + 1/2} - (\Psi_{\nu + 1} - \Psi_\nu), \ \Delta \mathbf{v}_{\nu + 1/2} = \mathbf{v_{\nu + 1}} - \mathbf{v}_\mathbf{\nu}
+\end{equation}
+where $\mathbf{v}$ represents the entropy variable and $\Psi$ is an arbitary grid function. For Euler's equation in 1D, the above two quanitites are:
+\begin{equation}
+    \begin{split}
+        \mathbf{v} &= 
+        \begin{pmatrix}
+            \frac{\gamma - S}{\gamma - 1}-\frac{\rho u^2}{2p} \\
+            \frac{m}{p}\\
+            -\frac{\rho}{p}
+        \end{pmatrix}\\
+        \Psi &= \rho u
+    \end{split}
+\end{equation} 
+We use the following short hand $\left[\cdot \right]$ to represent the difference between two neighboring cells. We then have the following entropy production
+\begin{equation}
+    \left[\mathbf{v}\right] \cdot \mathbf{g} - \left[\Psi\right]
+\end{equation}
+It could be shown that if the flux is of central difference type $g = \bar{g}$, then the entropy production is of 3rd order:
+\begin{equation}
+    \left[\mathbf{v}\right] \cdot \bar{g} = \mathcal{O}(\delta^3)
+\end{equation}
+The third order production is small in smooth region, large across shocks and incorrect across rarefraction waves. The large production production across shocks are essentially correct since entropy across shocks should increase. However, it is incorrect across rarefractions as entropy production should be zero across rarefraction waves. We at first seek to construct an entropy conservative flux, which for Euler's equations, satisfy the following:
+\begin{equation}
+    \left[\mathbf{v}\right] \cdot \mathbf{g} = \left[\rho u\right]
+\end{equation}
+Roe then introduced the following Entropy conservative flux:
+\subsection{An Entropy Conservative Flux}
+We at first define a parameter vector:
+\begin{equation}
+    \mathbf{z} = \sqrt{\frac{\rho}{p}} (1, u, p)
+\end{equation}
+which we could then redefine the entropy variable as:
+\begin{equation}
+    \mathbf{v} = \left(\frac{\gamma}{\gamma - 1} + \frac{\gamma + 1}{\gamma -1} \ln z_1 + \ln z_3 - \frac{1}{2} z_2^2, z_1 z_2, -z_1^2\right)^T
+\end{equation}
+We then have the following flux:
+\begin{equation}
+    \begin{split}
+        f_1^* &= \bar{z}_1 \bar{z}_3^{\ln}\\
+        f_2^* &= \frac{\bar{z}_3 + \bar{z}_2 f_1^*}{\bar{z}_1}\\
+        f_3^* &= \frac{1}{2\bar{z}_1}\left(\frac{\gamma + 1}{\gamma -1} \frac{f_1^*}{z_1^{\ln}} + \bar{z}_2 f_2^* \right)
+    \end{split}
+\end{equation}
+This flux exactly preserves entropy across discontinuities. In addition, note that logarithmic mean, $(\cdot)^{\ln}$, is used here. 
+logarithmic mean is defined as follow:
+\begin{equation}
+    L(x_1,x_2) = \frac{x_1 - x_2}{\ln x_1 - \ln x_2}
+\end{equation}
+We see that if $x_1$ and $x_2$ both approach $x$, then the entire expression would reduce to $x$. This average allows us to replace $\left[\ln p\right]$ with $\frac{\left[p\right]}{p^{\ln}}$ where $p^{\ln} = L(p_L,p_R)$.
+Another reason why logarithmic mean maybe preferred more than arithmatic mean is their tendency to take a lower mean of when the pair of number givens are extremely far apart. Therefore this will act as an limiter that limits the flux states when encoutering disconnected values such as across a discontinuity. 
 
+\subsection{Entropy Stability via Upwinding}
+So far the flux presented exactly preserves entropy (i.e only the equality in Equation \ref{eq:EntrpyInequality} is satisfied). However, it is not really \textit{entropy stable}. We then proceed to consider upwinding. A typical first order upwind flux is written as follow:
+\begin{equation} \label{eq:oldFlux}
+    f^* = \bar{f} - \frac{1}{2}\left|\mathbf{A} \right| \left[\mathbf{u}\right]
+\end{equation}
+The second term introduces the upwind component on top of a central flux. $\left|\mathbf{A}\right| = \mathbf{R \left|\Lambda \right| L }$ is the absolute value of the flux Jacobian evaluated at an arbitary state (i.e Roe's averaged state). Following Tadmor's approach, we quanitify that the entropy produced at with the upwind is:
+\begin{equation}
+    -\frac{1}{2} \left[\mathbf{v}\right] \mathbf{R \left|\Lambda \right| L } \left[\mathbf{u}\right]
+\end{equation}
+For very strong shock the sign may become inconsisten, therefore Roe introduced a reformulation such that the right hand side will be in positive definite quadratic form[]:
+\begin{equation}
+    -\frac{1}{2} \left[\mathbf{v}\right] \mathbf{R \left|\Lambda \right| L } \left[\mathbf{u}\right] = \frac{1}{2}\left[\mathbf{v}\right] \mathbf{R \left|\Lambda \right| R^T } \left[\mathbf{v}\right]
+\end{equation}
+We then have the following new \textit{entropy stable} upwind flux:
+\begin{equation} \label{eq:newFlux}
+    f^*_{\text{new}} = f_C - \frac{1}{2} \mathbf{R \left|\Lambda \right| R^T } \left[\mathbf{v}\right]
+\end{equation}
+where $f_C$ denotes the entropy conservative flux introduced in the previous section. We note that the $f_C$ flux is already entropy conservative. Mathematically, it satisfies the Tadmor conservation criterion: 
+\begin{equation}
+    \left[\mathbf{v}\right]\cdot f_C = \left[\rho u\right]
+\end{equation}
+Then, the introduction of the upwinding with a \textit{constant} sign via reformulation guaranteed that the following \textit{inequality} will be satisfied:
+\begin{equation}
+    \left[\mathbf{v}\right] \cdot f^*_{\text{new}} \leq \left[\rho u\right]
+\end{equation}
+which satisfies the entropy condition, and that the new flux is entropy \textit{stable}. 
 
+Roe mentions that the new flux cures two shock instability problems in 1D.
+\begin{enumerate}
+    \item For high mach number, the upwind scheme with un-reformulated upwind (Equation \ref{eq:oldFlux}) or Godunov's scheme will have spontaneously relocation of shocks
+    \item The un-reformulated flux and Godunov scheme will sometimes gives rise to waves that reflect perpetually between the shock and the boundary
+\end{enumerate}
+With the new entropy stable flux, both problems are removed. However, Roe noted that the new flux experiences overshoots when predicting shocks. That is, the state values immediately beside a discontinuity are over-predicted. This is due to upwind component of Equation \ref{eq:newFlux} generates entropy at $\mathcal{O}(\delta^2)$, while the entropy generated by shock is $\mathcal{O}(\delta^3)$. 
 
+Recall that the central flux generated $\mathcal{O}(\delta^3)$ flux in the old flux formulation Equation \ref{eq:oldFlux}. Roe then derived an additional flux term in Equation \ref{eq:oldFlux}:
+\begin{equation}
+    f^* = f_C - \frac{1}{2}\mathbf{R}(\left|\Lambda \right| + \alpha \left| \left[\Lambda\right] \right|) \mathbf{R}^T \left[\mathbf{v}\right]
+\end{equation}
+where we could take $\alpha \approx 1/3$ and the new scheme would elimniate overshoots.
 
+In summary, building on top of Tadmor's entropy criterion, Roe was able to quantify the amount of entropy produced in a scheme and construct an entropy \textit{conservative} flux. He then introduced an upwind component with a constant sign that is guaranteed to satisfy the entropy condition, making the new scheme ultimately entropy \textit{stable}.
 
-
-
+We consider \cite[text]{}
+%---------------------------------------------------------------------------------------------
+\bibliographystyle{plain} % We choose the "plain" reference style
+\bibliography{refs} % Entries are in the refs.bib file
 
 \end{document}
