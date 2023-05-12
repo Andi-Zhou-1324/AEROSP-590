@@ -632,8 +632,124 @@ Recall that the central flux generated $\mathcal{O}(\delta^3)$ flux in the old f
 where we could take $\alpha \approx 1/3$ and the new scheme would elimniate overshoots.
 
 In summary, building on top of Tadmor's entropy criterion, Roe was able to quantify the amount of entropy produced in a scheme and construct an entropy \textit{conservative} flux. He then introduced an upwind component with a constant sign that is guaranteed to satisfy the entropy condition, making the new scheme ultimately entropy \textit{stable}.
+\clearpage
+%===============EULER SECTION========================
+\section{1D Euler Equation Analysis}
+We now consider the Euler's compressible flow equation in 1D. 
+\begin{equation}
+    \begin{split}
+        \frac{\partial \rho}{\partial t} + \frac{\partial}{\partial x}(\rho u) &= 0\\
+        \frac{\partial \rho u}{\partial t} + \frac{\partial}{\partial x}(\rho u^2 + p)& = 0\\
+        \frac{\rho e^t}{\partial t} + \frac{\partial}{\partial x}(u(\rho e^t + p))& = 0\\
+    \end{split}
+\end{equation}
+where $e^t = e + k$. We neglect body force and heat generation in the equation.
+\subsection{Conservation Equation for Entropy}
+We now derive the conservation equation for entropy. From Task 1, we have derived the conservation equation for kinetic energy. In 1D, it is as follow:
+\begin{equation}
+    \frac{\partial \rho k}{\partial t} + \frac{\partial}{\partial x}(u(\rho k + p)) = p \frac{\partial u}{\partial x}
+\end{equation}
+We now require the conservation equation for internal energy. We understand from thermodynamic principle that:
+\begin{equation}
+    E_{\text{total}} = E_{\text{internal}} + E_{\text{kinetic}}
+\end{equation}
+Therefore:
+\begin{equation}
+    \begin{split}
+        \frac{\partial (\rho(e + k))}{\partial t} + \frac{\partial}{\partial x} \left(\rho u e + up + \rho u k\right) &=  E_{\text{internal}} +     \frac{\partial \rho k}{\partial t} + \frac{\partial}{\partial x}(u(\rho k + p)) - p \frac{\partial u}{\partial x}\\
+        E_{\text{internal}} &= \frac{\partial \rho e}{\partial t} + \frac{\partial}{\partial x}(\rho u e) + p \frac{\partial u}{\partial x}\\
+    \end{split}
+\end{equation}
+We are now ready to derive the conservation equation for entropy. We first use Gibbs equation:
+\begin{equation}\label{eq:GibbsEquation}
+    \rho \frac{D e}{Dt} - \left(\frac
+    {P}{\rho}\right) \frac{D \rho}{D t} = \rho T \frac{D s}{D t}
+\end{equation}
+And we write the temporal derivative in the internal energy equation in total derivative form:
+\begin{equation} \label{eq:internalEnergy}
+    \begin{split}
+        \frac{\partial \rho e}{\partial t} + \frac{\partial}{\partial x}(\rho u e) + p \frac{\partial u}{\partial x} &= 0\\
+        \rho \frac{D e}{D t} + p \frac{\partial u}{\partial x} &= 0\\
+    \end{split}
+\end{equation}
 
-We consider \cite[text]{}
+Recall the transfer between the total (Lagrangian) derivative  and Eulerian derivative:
+\begin{equation}
+    \frac{D k}{Dt} = \frac{\partial k}{\partial t} + u \frac{\partial k}{\partial x}
+\end{equation}
+We then rewrite the continuity equation as well:
+\begin{equation}
+    \begin{split}
+        \frac{\partial \rho}{\partial t} + \frac{\partial}{\partial x}(\rho u) &= 0\\
+        \frac{1}{\rho} \frac{D \rho}{Dt} &= - \frac{\partial u}{\partial x}\\
+    \end{split}
+\end{equation}
+We also multiply the continuity equation by pressure:
+\begin{equation}
+    \frac{p}{\rho} \frac{D \rho}{Dt} = - p \frac{\partial u}{\partial x}
+\end{equation}
+We could now rewrite the pressure term in Equation \ref{eq:internalEnergy}, and we would arrive at the following form:
+\begin{equation}
+    \rho \frac{D e}{D t} - \frac{p}{\rho} \frac{D \rho}{Dt} = 0
+\end{equation}
+We now compared with Gibbs equation (Equation \ref{eq:GibbsEquation}), and notice that the left hand side are the exact same. Then, we could write:
+\begin{equation}
+    \rho\frac{Ds}{Dt} = 0
+\end{equation}
+We rewrite in convective form:
+\begin{equation}\label{eq:convectiveEntropy}
+    \rho \frac{\partial s}{\partial t} + \rho u \frac{\partial s}{\partial x} = 0
+\end{equation}
+We then cite the continuity equation again and expand out the spatial derivative using chain rule and multiply by $s$:
+
+\begin{equation}
+    \begin{split}
+        s\frac{\partial \rho}{\partial t} + s\frac{\partial}{\partial x}(\rho u) &= 0\\
+        s\frac{\partial \rho}{\partial t} + su \frac{\partial \rho}{\partial x} + s\rho \frac{\partial u}{\partial x} &= 0\\
+    \end{split}
+\end{equation}
+We note that we could combine boht the temporal derivative and spatial derivative from the above equation with Equation \ref{eq:convectiveEntropy}, and we could write everything as a conservation law:
+\begin{equation}
+    \frac{\partial \rho s}{\partial t} + \frac{\partial \rho s u}{\partial x} = 0
+\end{equation}
+We have then arrived at the conservation equation for entropy. Note that in our case, we did not include terms such as viscous dissipation or heat source. If such terms are present, they would appear on the right hand side as source terms.
+
+\subsection{Formalizing Derivation}
+\subsection{Dimension}
+\subsection{Convexity}
+\subsubsection{Definition}
+Convexity is a geometric condition in which if we draw a line between any two points on a convex function, the line \textit{always} lie above the function. Mathematically, it is defined as the following:
+\begin{equation}
+    f(tx_1 + (1-t)x_2) \leq tf(x_1) + (1-t)f(x_2)
+\end{equation}
+This is known as the convexity condition, where $t$ varies between $0$ and $1$. Equivalently, a twice-differentiable function of a single variable is convex if and only if its second derivative is positive. For example, common convex functions that we are familiar with are the quadratic function $y = x^2$ and the absolute value function $y = \left| x \right|$.
+To prove that the entropy density $\rho s$ is convex, we turn towards its Hessian, the multivariable equivalent of the second derivative of single variable function. If the Hessian is \textit{positive definite}, then the entropy density is a convex function of the state.
+
+\subsubsection{Harten's Theorem}
+We refer to Harten et al [] for his theorem regarding entropy density convexity:\textit{
+We take $s$ as an entropy variable, and let $s$ be twice differentiable at $\mathbf{u} = (\rho, \rho u, \frac{1}{2}\rho \left|u \right|^2 + \rho e)^T$, where $\rho$ and $\epsilon$ are positive. Then for every twice differentiable $f$, the generalized entropy denisty $\rho f(s)$ is strictly convex at $\mathbf{u}$ if and only if:}
+\begin{equation}
+    c^2 > 0, \ f'(s) > 0,\  f'(s) \frac{1}{c_p} + f^{''} (s) > 0
+\end{equation}
+
+where for polytropic ($\gamma$-law) gases:
+\begin{equation}
+    \begin{split}
+        c^2 &= \gamma(\gamma -1) e\\
+        c_p &= \frac{\gamma}{\gamma - 1}\\
+    \end{split}
+\end{equation}
+Assuming air with a $\gamma = 1.4$, $c$ and $c_p$ are guaranteed to be positive. We then see that the above conditions for $c^2$ satisfies automatically since the internal energy $e$ must be above zero for states to be \textit{physical}. We then consider the entropy function $f(s)$. In our case, $f(s) = s$. We then note the following:
+\begin{equation}
+    \begin{split}
+        f'(s) &= 1 > 0\\
+        f'(s)\frac{1}{c_p} + f''(s) &= \frac{1}{c_p} > 0\\
+    \end{split}
+\end{equation}
+Thus based on Harten's theorem, the entropy density $\rho s$ is strictly convex function of the states. 
+
+\subsubsection{Benefits of Convexity}
+
 %---------------------------------------------------------------------------------------------
 \bibliographystyle{plain} % We choose the "plain" reference style
 \bibliography{refs} % Entries are in the refs.bib file
