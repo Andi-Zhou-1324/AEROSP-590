@@ -78,12 +78,12 @@ l(2) = ucp-ci;
 l(3) = ucp;
 
 % entropy fix
-epsilon = ci*.1;
-for i=1:3,
-  if ((l(i)<epsilon) && (l(i)>-epsilon)),
-    l(i) = 0.5*(epsilon + l(i)*l(i)/epsilon);
-  end
-end
+% epsilon = ci*.1;
+% for i=1:3,
+%   if ((l(i)<epsilon) && (l(i)>-epsilon)),
+%     l(i) = 0.5*(epsilon + l(i)*l(i)/epsilon);
+%   end
+% end
 
 l = abs(l); l3 = l(3);
 

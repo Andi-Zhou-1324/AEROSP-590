@@ -1,39 +1,43 @@
 function [F] = roe_1D(UL, UR)
-    %Calculates Roe Flux following Toro's book
     gamma = 1.4;
 
     %Process Left States
     rho_L = UL(1);
     u_L = UL(2)/rho_L;
-    p_L = (gamma-1).*(UL(3) - (0.5).*UL(1).*(u_L).^2);
+    p_L = (gamma-1).*(UL(3) - (0.5).*UL(2).^2/UL(1));
+    E_L = UL(3);
+    a_L = sqrt(gamma.*p_L./rho_L);
+
     H_L = UL(3)./rho_L + p_L./rho_L;
-    rHL = UL(4) + p_L;
+
     if ((p_L<=0) || (rho_L<=0))
         error 'Non-physical state!', 
     end
 
     %Calculate Left Flux:
-    F_L = [rL*u_L;
+    F_L = [rho_L*u_L;
           UL(2)*u_L + p_L;
-          rHL*u_L];
+          u_L.*(E_L + p_L)];
+    
     %Process Right States
     rho_R = UR(1);
     u_R = UR(2)/rho_R;
-    p_R = (gamma-1).*(UR(3) - (0.5).*UR(1).*(u_R).^2);
-    H_R = UR(3)./rho_R + p_R./rho_R;
-    rHR = UR(3) + p_R;
+    p_R = (gamma-1).*(UR(3) - (0.5).*UR(2).^2/UR(1));
+    E_R = UR(3);
 
-    if ((p_L<=0) || (rho_L<=0))
+    H_R = UR(3)./rho_R + p_R./rho_R;
+    a_R = sqrt(gamma.*p_R./rho_R);
+
+    if ((p_R<=0) || (rho_R<=0))
         error 'Non-physical state!', 
     end
 
     %Calculate Right Flux
-    F_R = [rR*u_R;
-          UR(2)*u_R + p_R;
-          rHR*u_R];
+    F_R =  [rho_R*u_R;
+            UR(2)*u_R + p_R;
+            u_R.*(E_R + p_R)];
 
     %Calculating Roe averages
-    
     u   = (sqrt(rho_L).*u_L + sqrt(rho_R).*u_R)./(sqrt(rho_L) + sqrt(rho_R));
     H   = (sqrt(rho_L).*H_L + sqrt(rho_R).*H_R)./(sqrt(rho_L) + sqrt(rho_R));
     V   = u;
@@ -69,4 +73,6 @@ function [F] = roe_1D(UL, UR)
     end
 
     F = 0.5.*(F_L + F_R) - 0.5.*Roe_term;
+    F = F';
 end
+
