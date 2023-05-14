@@ -7,31 +7,40 @@ close all
 N = 100;
 gamma = 1.4;
 
+L = [-10, 10];
+
 u = zeros(N,3);
+%Setting Initial Conditions for Sod shock tube problem
 
-T = 300;
+p = zeros(N,1);
+p(1:round(N/2)) = 1.0;
+p(round(N/2)+1:end) = 0.1;
+p = p.*101325;
+%Density initial condition
+u(1:round(N/2),1) = 1;
+u(round(N/2)+1:end,1) = 0.125;
 
-%Setting Initial Conditions with a square wave at the center
-u(:,1) = 0.125;
-squareOffset = 10;
-u(round(size(u,1)/2)-squareOffset:round(size(u,1)/2)+squareOffset,1) = 1;
+%Velocity initial condition
+u(1:round(N/2),2) = 0.75;
 
-P = u(:,1).*287.*T;
-u(:,3) = (P)./(gamma - 1) + (1/2)*u(:,1).*abs(u(:,2)).^2;
+%
+u(:,3) = 1./u(:,1).*(p./(gamma - 1) + 1/2.*u(:,1).*abs(u(:,2)).^2);
+
 %Defining coordinates
-u_coord = (0+(1/N/2):1/N:1-(1/N/2))';
+L_mag = sum(abs(L));
+u_coord = (L(1)+(L_mag/N/2):L_mag/N:L(2)-(L_mag/N/2))';
 
 c1 = plot(u_coord,u(:,1),'Color',[0, 0.4470, 0.7410]);
 
 E2N = [(1:N-1)',(2:N)'];
 
-E2N = [E2N;N,1];
+% E2N = [E2N;N,1];
 
 
 CFL = 1; %CFL number of 1
-d_x = 1./N;
+d_x = L_mag./N;
 
-T = 10;
+T = 0.2;
 
 %% Forward Euler Stepping
 figure()
@@ -47,12 +56,12 @@ t_history = [];
 save = 1;
 while t < T
     count = count + 1;
-    dt = 1E-6;
+    dt = 1E-5;
     %RK2
-    [Residual_1] = calculateResidual_periodic(u,N,E2N,@roe);
+    [Residual_1] = calculateResidual_freestream(u,N,E2N,@roe);
 
     u_1 = u - dt.*Residual_1./d_x;
-    [Residual_2] = calculateResidual_periodic(u_1,N,E2N,@roe);
+    [Residual_2] = calculateResidual_freestream(u_1,N,E2N,@roe);
     u = u - dt.*(0.5.*(Residual_1+Residual_2));
     
     if mod(count,100) == 0

@@ -158,7 +158,7 @@ We see that due to the difference the state, the slope ($1/a$) varies across the
 We now consider the weak form:
 
 \begin{equation}\label{eq:integralConservationLaw}
-    \int_{0}^{\infty} \int_{-\infty}^{\infty} \left[w_t u + w_x f(u) \right] dx dt + \int_{\infty}^\infty w(x,0) \phi(x) dx = 0
+    \int_{0}^{\infty} \int_{-\infty}^{\infty} \big[w_t u + w_x f(u) \big] dx dt + \int_{\infty}^\infty w(x,0) \phi(x) dx = 0
 \end{equation}
 where $w$ is any smooth test function with compact support (non-zero only within the specified element). The general idea of weak solution is that we could rewrite the derivatives of $u$ as derivatives of compact test function $w$. From this, we basically eliminated the need for solution to be continuous. However, for hyperbolic systems (which we are interested in), the notion of weak solution \textbf{does not} guarantee uniqueness. Therefore, we need some sort of criterions to select a solution that is \textit{physical}. We then have the \textbf{entropy} condition. 
 
@@ -199,11 +199,11 @@ Take $\epsilon \rightarrow 0$, we then recover the entropy condition:
 
 We note that, if $u$ is a piecewise continous solution to Equation \ref{singleConservationLaw}, we could arrive at the following assuming we are at a point of discontinuity:
 \begin{equation}
-    s \left[U\right] - \left[F\right] \leq 0
+    s \big[U\big] - \big[F\big] \leq 0
 \end{equation}
-where $s$ is the speed of the discontinuity while $\left[\cdot\right]$ denotes jump in the respective quantity across the discontinuity. The above relation is analogous to the Rankine-Hugoniot jump relation:
+where $s$ is the speed of the discontinuity while $\big[\cdot\big]$ denotes jump in the respective quantity across the discontinuity. The above relation is analogous to the Rankine-Hugoniot jump relation:
 \begin{equation}
-    s \left[u^j\right] - \left[f^j\right] = 0
+    s \big[u^j\big] - \big[f^j\big] = 0
 \end{equation}
 We could actually rewrite the entropy condition as follow:
 \begin{equation}
@@ -232,20 +232,20 @@ The Lax-Friedrich scheme, under a specific CFL number, satisfies the entropy con
 The general Lax-Friedrich discretization is as follow:
 \begin{equation}
     \begin{split}
-        u_t &= \frac{1}{\Delta t}\left( u^{n+1}_j - \frac{u^n_{j-1} + u^n_{j+1}}{2} \right)  \\
-        f_x &= \frac{1}{2\Delta x}\left(f(u^n_{j+1}) - f(u^n_{j-1})\right)
+        u_t &= \frac{1}{\Delta t}\big( u^{n+1}_j - \frac{u^n_{j-1} + u^n_{j+1}}{2} \big)  \\
+        f_x &= \frac{1}{2\Delta x}\big(f(u^n_{j+1}) - f(u^n_{j-1})\big)
     \end{split}
 \end{equation}
 Combined together, we obtain the Lax-Friedrich scheme:
 \begin{equation}
     \begin{split}
-        &\frac{1}{\Delta t}\left( u^{n+1}_j - \frac{u^n_{j-1} + u^n_{j+1}}{2} \right) + \frac{1}{2\Delta x}\left(f(u^n_{j+1}) - f(u^n_{j-1})\right) = 0 \\
-        &u_j^{n+1} = \frac{1}{2}(u_{i+1}^n + u_{i-1}^n) - \frac{\Delta t}{2\Delta x}\left(f(u^n_{j+1}) - f(u^n_{j-1})\right)
+        &\frac{1}{\Delta t}\big( u^{n+1}_j - \frac{u^n_{j-1} + u^n_{j+1}}{2} \big) + \frac{1}{2\Delta x}\big(f(u^n_{j+1}) - f(u^n_{j-1})\big) = 0 \\
+        &u_j^{n+1} = \frac{1}{2}(u_{i+1}^n + u_{i-1}^n) - \frac{\Delta t}{2\Delta x}\big(f(u^n_{j+1}) - f(u^n_{j-1})\big)
     \end{split}
 \end{equation}
 We note that the above scheme is essentialy FTCS:
 \begin{equation}
-    u_j^{n+1} = \underbrace{\frac{1}{2}(u_{i+1}^n + u_{i-1}^n)}_{\text{Temporal Derivative}} - \underbrace{\frac{\Delta t}{2\Delta x}\left(f(u^n_{j+1}) - f(u^n_{j-1})\right)}_{\text{Spatial derivative (Centered in Space)}}
+    u_j^{n+1} = \underbrace{\frac{1}{2}(u_{i+1}^n + u_{i-1}^n)}_{\text{Temporal Derivative}} - \underbrace{\frac{\Delta t}{2\Delta x}\big(f(u^n_{j+1}) - f(u^n_{j-1})\big)}_{\text{Spatial derivative (Centered in Space)}}
 \end{equation}
 According to Lax[], the Lax-Friedrich scheme satisfies the entropy condition under a suitable choice of the $\lambda = \frac{\Delta t}{\Delta x}$.
 
@@ -272,7 +272,7 @@ The solution is approximated by a mesh function $w_j^n$ on the mesh ${(x_J,t^n)}
     \item 
 \begin{equation} \label{eq:E-O Conservation Law}
     \begin{split}
-        w_j^{n+1} &= w_j^n - \frac{\Delta t}{\Delta x}\left(\Delta_{+} f_{-} (w_j^n) + \Delta_{-} f_{+} (w_j^n) \right) \\
+        w_j^{n+1} &= w_j^n - \frac{\Delta t}{\Delta x}\big(\Delta_{+} f_{-} (w_j^n) + \Delta_{-} f_{+} (w_j^n) \big) \\
         w_j^0 &= \Phi(x_j), j = 0, \pm 1, \pm 2\\
     \end{split}
 \end{equation}
@@ -381,7 +381,7 @@ We then follow that the matrix $\tilde{A}$ could be constructed from mean value 
 \end{equation}
 where $\theta$ is a parameter that vary linearly between 0 and 1 along a straight path connecting each state. By choosing a suitable integration path, candidates for $A$ that is closed and cheap to compute could be found. We could then have the following formula based on $\tilde{A}$:
 \begin{equation} \label{Roe's Integral}
-    F_j(\mathbf{u}_L) - F_j(\mathbf{u}_R) = \sum_i \tilde{a}_{ij} \left[(u_i)_L - (u_i)_R\right]
+    F_j(\mathbf{u}_L) - F_j(\mathbf{u}_R) = \sum_i \tilde{a}_{ij} \big[(u_i)_L - (u_i)_R\big]
 \end{equation} 
 where $a_ij$ is the matrix entries into $\tilde{A}$. The $\tilde{a}_{ij}$ satisfies the first amd third conditions of Property U.
 
@@ -395,8 +395,8 @@ For Euler's compressible flow equation (or polytropic ideal gases), Roe introduc
 which allow us to easily integrate and satisfy the Equation \ref{Roe's Integral}. We introduce two equations:
 \begin{equation}
     \begin{split}
-        \left(\mathbf{u}_L - \mathbf{u}_R\right) &= \tilde{B}(\mathbf{w}_L - \mathbf{w}_R)\\
-        \left(\mathbf{F}_L - \mathbf{F}_R\right) &= \tilde{C}(\mathbf{w}_L - \mathbf{w}_R)\\
+        \big(\mathbf{u}_L - \mathbf{u}_R\big) &= \tilde{B}(\mathbf{w}_L - \mathbf{w}_R)\\
+        \big(\mathbf{F}_L - \mathbf{F}_R\big) &= \tilde{C}(\mathbf{w}_L - \mathbf{w}_R)\\
     \end{split}
 \end{equation}
 where the first equation provides a link for $\mathbf{w}$ in terms of $\mathbf{u}$. Then, through the new change of variables conducted we could write the following $\tilde{B}$ and $\tilde{C}$ matrix:
@@ -446,7 +446,7 @@ We focus on the derivation and discussion for the first theorem and briefly stat
 \subsection{Tadmor's Entropy Stability Criterion}
 We again consider a one-dimensional conservation law:
 \begin{equation}
-    \frac{\partial}{\partial t} \mathbf{u} + \frac{\partial}{\partial x}\left[\mathbf{f(u)}\right] = 0
+    \frac{\partial}{\partial t} \mathbf{u} + \frac{\partial}{\partial x}\big[\mathbf{f(u)}\big] = 0
 \end{equation}
 and we introduce the entropy function $U(u)$, a \textit{convex} function of $u$ along with the entropy flux $F(u)$, which is also a convex function of $u$. We recall the entropy condition:
 \begin{equation}\label{eq:EntrpyInequality}
@@ -463,28 +463,28 @@ We also introduce the entropy variable:
 \end{equation}
 which is one-to-one mapping to $\mathbf{u}(\mathbf{v})$ due to the convexity of $U$. We could then write the conservation equation as follow:
 \begin{equation} \label{eq:EntopyConservationEquation}
-    \frac{\partial}{\partial t}\left[\mathbf
+    \frac{\partial}{\partial t}\big[\mathbf
     u(\mathbf
-    v)\right] + \frac{\partial}{\partial x}\left[\mathbf
+    v)\big] + \frac{\partial}{\partial x}\big[\mathbf
     g(\mathbf
-    v)\right] = 0, \ \mathbf{g(v)} = \mathbf{f}(\mathbf{u}(\mathbf{
+    v)\big] = 0, \ \mathbf{g(v)} = \mathbf{f}(\mathbf{u}(\mathbf{
     v}))
 \end{equation}
 We discretize Equation \ref{eq:EntopyConservationEquation} and \ref{eq:EntrpyInequality} and have the following:
 \begin{equation} \label{eq:EntropySystem}
     \begin{split}
-        &\frac{d}{dt} \left[\mathbf{u}(\mathbf{v_v}(t))\right] = -\frac{1}{\Delta x}\left[\mathbf
-        {g}_{\nu+1/2} - \mathbf{g}_{\nu-1/2}\right]\\
-        &\frac{d}{dt} V(\mathbf{v_\nu}(t)) + \frac{1}{\Delta x}\left[G_{\nu + 1/2} - G_{\nu - 1/2}\right] \leq 0 \\
+        &\frac{d}{dt} \big[\mathbf{u}(\mathbf{v_v}(t))\big] = -\frac{1}{\Delta x}\big[\mathbf
+        {g}_{\nu+1/2} - \mathbf{g}_{\nu-1/2}\big]\\
+        &\frac{d}{dt} V(\mathbf{v_\nu}(t)) + \frac{1}{\Delta x}\big[G_{\nu + 1/2} - G_{\nu - 1/2}\big] \leq 0 \\
     \end{split}
 \end{equation}
 which are the conservation equation along with its respective entropy inequality. Our end goal is \textit{entropy conservative} schemes, in which only the eqiality hold in Equation \ref{eq:EntrpyInequality}. We multply the first equation of Equation \ref{eq:EntropySystem} by the entropy variable by $\mathbf{v}_\nu^T(t) = U_\mathbf{u}^T(\mathbf{u_\nu(t)})$, which we obtain the following:
 \begin{equation}\label{eq:Convert1}
-    \frac{d}{dt}V(\mathbf{v}_\nu(t)) = \frac{d}{dt} U(\mathbf{u}_\nu(t)) = -\frac{1}{\Delta x} \mathbf{v}_\nu^T \left[\mathbf{g}_{\nu + 1/2} - \mathbf{g}_{\nu - 1/2}\right]
+    \frac{d}{dt}V(\mathbf{v}_\nu(t)) = \frac{d}{dt} U(\mathbf{u}_\nu(t)) = -\frac{1}{\Delta x} \mathbf{v}_\nu^T \big[\mathbf{g}_{\nu + 1/2} - \mathbf{g}_{\nu - 1/2}\big]
 \end{equation}
 which we could subsitute into the entropy condition and have the following equality. The expression:
 \begin{equation}\label{eq:Convert2}
-    \mathbf{v}_\nu^T \left[\mathbf{g}_{\nu + 1/2} - \mathbf{g}_{\nu - 1/2} \right] = \mathbf{G}_{\nu + 1/2} - \mathbf{G}_{\nu - 1/2}
+    \mathbf{v}_\nu^T \big[\mathbf{g}_{\nu + 1/2} - \mathbf{g}_{\nu - 1/2} \big] = \mathbf{G}_{\nu + 1/2} - \mathbf{G}_{\nu - 1/2}
 \end{equation}
 is conservative if and only if:
 \begin{equation}\label{eq:Tadmor'sEntropyCriteria}
@@ -511,9 +511,9 @@ In [], Tadmor only proved entropy conservation (i.e Entropy is equal across a ce
 
 Essentially, we consider three points schemes that could be written in the following viscosity form:
 \begin{equation} \label{eq:EntropyConservedScheme_Viscosity_form}
-    \frac{d}{dt}\left[\mathbf(
-    u(\mathbf{v_\nu}(t)))\right] = - \frac{1}{2\Delta x} \left[\mathbf
-    {g}(\mathbf{v_{\nu+1}}) - \mathbf{g}(\mathbf{v_{\nu-1}})\right] + \frac{1}{2\Delta x} \left[Q_{\nu + 1/2} \Delta \mathbf{v}_{\nu+1/2} - Q_{\nu + 1/2} \Delta \mathbf{v}_{\mathbf{v}-1/2}\right]
+    \frac{d}{dt}\big[\mathbf(
+    u(\mathbf{v_\nu}(t)))\big] = - \frac{1}{2\Delta x} \big[\mathbf
+    {g}(\mathbf{v_{\nu+1}}) - \mathbf{g}(\mathbf{v_{\nu-1}})\big] + \frac{1}{2\Delta x} \big[Q_{\nu + 1/2} \Delta \mathbf{v}_{\nu+1/2} - Q_{\nu + 1/2} \Delta \mathbf{v}_{\mathbf{v}-1/2}\big]
 \end{equation}
 Where $Q_{\mathbf{v}+1/2}$ is referred to as the numerical viscosity coefficient matrix. We note that the class of three-point schemes includes second-prder accurate TVD schemes such as the High-Resolution Osher flux and a number of other schemes [][]. We then introduce a new variable:
 \begin{equation}
@@ -521,14 +521,14 @@ Where $Q_{\mathbf{v}+1/2}$ is referred to as the numerical viscosity coefficient
 \end{equation}
 which denote the deviation of its viscosity from that of the entropy conservative scheme, which we then have:
 \begin{equation}
-    \frac{d}{dt}\left[\mathbf(
-    u(\mathbf{v_\nu}(t)))\right] = - \frac{1}{2\Delta x} \left[\mathbf
-    {g}(\mathbf{v_{\nu+1}}) - \mathbf{g}(\mathbf{v_{\nu-1}})\right] + \frac{1}{2\Delta x} \left[D_{\nu + 1/2} \Delta \mathbf{v}_{\nu+1/2} - D_{\nu + 1/2} \Delta \mathbf{v}_{\mathbf{v}-1/2}\right]
+    \frac{d}{dt}\big[\mathbf(
+    u(\mathbf{v_\nu}(t)))\big] = - \frac{1}{2\Delta x} \big[\mathbf
+    {g}(\mathbf{v_{\nu+1}}) - \mathbf{g}(\mathbf{v_{\nu-1}})\big] + \frac{1}{2\Delta x} \big[D_{\nu + 1/2} \Delta \mathbf{v}_{\nu+1/2} - D_{\nu + 1/2} \Delta \mathbf{v}_{\mathbf{v}-1/2}\big]
 \end{equation}
 We could also rewrite the above equation in the form of entropy condition (as per last section), following essentially the same step as outlined in Equation \ref{eq:Convert1} and Equation \ref{eq:Convert2} and use identities outlined in [] to obtain the following:
 \begin{equation}
     \begin{split}
-        \frac{d}{dt} V(\mathbf{v}_\nu(t)) + \frac{1}{\Delta x}\left[G_{\nu + 1/2} - G_{\nu - 1/2}\right] = -\frac{1}{4\Delta x} \left[\Delta \mathbf{v}_{\nu+1/2}^T D_{\nu + 1/2} \Delta \mathbf{v}_{\nu+1/2} - \Delta \mathbf{v}_{\nu-1/2}^T D_{\nu - 1/2} \Delta \mathbf{v}_{\nu-1/2}\right]
+        \frac{d}{dt} V(\mathbf{v}_\nu(t)) + \frac{1}{\Delta x}\big[G_{\nu + 1/2} - G_{\nu - 1/2}\big] = -\frac{1}{4\Delta x} \big[\Delta \mathbf{v}_{\nu+1/2}^T D_{\nu + 1/2} \Delta \mathbf{v}_{\nu+1/2} - \Delta \mathbf{v}_{\nu-1/2}^T D_{\nu - 1/2} \Delta \mathbf{v}_{\nu-1/2}\big]
     \end{split}
 \end{equation}
 We observe that if the scheme is considered to contain more viscosity, then $D$ would be positive, and the overall right hand side of the above equation remains \textit{negative}, which then leads to the entropy condition being satisfied (Equation \ref{eq:EntropySystem}). This theorem allows us to tune additional numerical viscosity such that both entropy stability and second order accuracy could be obtained.
@@ -553,17 +553,17 @@ where $\mathbf{v}$ represents the entropy variable and $\Psi$ is an arbitary gri
         \Psi &= \rho u
     \end{split}
 \end{equation} 
-We use the following short hand $\left[\cdot \right]$ to represent the difference between two neighboring cells. We then have the following entropy production
+We use the following short hand $\big[\cdot \big]$ to represent the difference between two neighboring cells. We then have the following entropy production
 \begin{equation}
-    \left[\mathbf{v}\right] \cdot \mathbf{g} - \left[\Psi\right]
+    \big[\mathbf{v}\big] \cdot \mathbf{g} - \big[\Psi\big]
 \end{equation}
 It could be shown that if the flux is of central difference type $g = \bar{g}$, then the entropy production is of 3rd order:
 \begin{equation}
-    \left[\mathbf{v}\right] \cdot \bar{g} = \mathcal{O}(\delta^3)
+    \big[\mathbf{v}\big] \cdot \bar{g} = \mathcal{O}(\delta^3)
 \end{equation}
 The third order production is small in smooth region, large across shocks and incorrect across rarefraction waves. The large production production across shocks are essentially correct since entropy across shocks should increase. However, it is incorrect across rarefractions as entropy production should be zero across rarefraction waves. We at first seek to construct an entropy conservative flux, which for Euler's equations, satisfy the following:
 \begin{equation}
-    \left[\mathbf{v}\right] \cdot \mathbf{g} = \left[\rho u\right]
+    \big[\mathbf{v}\big] \cdot \mathbf{g} = \big[\rho u\big]
 \end{equation}
 Roe then introduced the following Entropy conservative flux:
 \subsection{An Entropy Conservative Flux}
@@ -573,14 +573,14 @@ We at first define a parameter vector:
 \end{equation}
 which we could then redefine the entropy variable as:
 \begin{equation}
-    \mathbf{v} = \left(\frac{\gamma}{\gamma - 1} + \frac{\gamma + 1}{\gamma -1} \ln z_1 + \ln z_3 - \frac{1}{2} z_2^2, z_1 z_2, -z_1^2\right)^T
+    \mathbf{v} = \big(\frac{\gamma}{\gamma - 1} + \frac{\gamma + 1}{\gamma -1} \ln z_1 + \ln z_3 - \frac{1}{2} z_2^2, z_1 z_2, -z_1^2\big)^T
 \end{equation}
 We then have the following flux:
 \begin{equation}
     \begin{split}
         f_1^* &= \bar{z}_1 \bar{z}_3^{\ln}\\
         f_2^* &= \frac{\bar{z}_3 + \bar{z}_2 f_1^*}{\bar{z}_1}\\
-        f_3^* &= \frac{1}{2\bar{z}_1}\left(\frac{\gamma + 1}{\gamma -1} \frac{f_1^*}{z_1^{\ln}} + \bar{z}_2 f_2^* \right)
+        f_3^* &= \frac{1}{2\bar{z}_1}\big(\frac{\gamma + 1}{\gamma -1} \frac{f_1^*}{z_1^{\ln}} + \bar{z}_2 f_2^* \big)
     \end{split}
 \end{equation}
 This flux exactly preserves entropy across discontinuities. In addition, note that logarithmic mean, $(\cdot)^{\ln}$, is used here. 
@@ -588,33 +588,33 @@ logarithmic mean is defined as follow:
 \begin{equation}
     L(x_1,x_2) = \frac{x_1 - x_2}{\ln x_1 - \ln x_2}
 \end{equation}
-We see that if $x_1$ and $x_2$ both approach $x$, then the entire expression would reduce to $x$. This average allows us to replace $\left[\ln p\right]$ with $\frac{\left[p\right]}{p^{\ln}}$ where $p^{\ln} = L(p_L,p_R)$.
+We see that if $x_1$ and $x_2$ both approach $x$, then the entire expression would reduce to $x$. This average allows us to replace $\big[\ln p\big]$ with $\frac{\big[p\big]}{p^{\ln}}$ where $p^{\ln} = L(p_L,p_R)$.
 Another reason why logarithmic mean maybe preferred more than arithmatic mean is their tendency to take a lower mean of when the pair of number givens are extremely far apart. Therefore this will act as an limiter that limits the flux states when encoutering disconnected values such as across a discontinuity. 
 
 \subsection{Entropy Stability via Upwinding}
 So far the flux presented exactly preserves entropy (i.e only the equality in Equation \ref{eq:EntrpyInequality} is satisfied). However, it is not really \textit{entropy stable}. We then proceed to consider upwinding. A typical first order upwind flux is written as follow:
 \begin{equation} \label{eq:oldFlux}
-    f^* = \bar{f} - \frac{1}{2}\left|\mathbf{A} \right| \left[\mathbf{u}\right]
+    f^* = \bar{f} - \frac{1}{2}\left|\mathbf{A} \right| \big[\mathbf{u}\big]
 \end{equation}
 The second term introduces the upwind component on top of a central flux. $\left|\mathbf{A}\right| = \mathbf{R \left|\Lambda \right| L }$ is the absolute value of the flux Jacobian evaluated at an arbitary state (i.e Roe's averaged state). Following Tadmor's approach, we quanitify that the entropy produced at with the upwind is:
 \begin{equation}
-    -\frac{1}{2} \left[\mathbf{v}\right] \mathbf{R \left|\Lambda \right| L } \left[\mathbf{u}\right]
+    -\frac{1}{2} \big[\mathbf{v}\big] \mathbf{R \left|\Lambda \right| L } \big[\mathbf{u}\big]
 \end{equation}
 For very strong shock the sign may become inconsisten, therefore Roe introduced a reformulation such that the right hand side will be in positive definite quadratic form[]:
 \begin{equation}
-    -\frac{1}{2} \left[\mathbf{v}\right] \mathbf{R \left|\Lambda \right| L } \left[\mathbf{u}\right] = \frac{1}{2}\left[\mathbf{v}\right] \mathbf{R \left|\Lambda \right| R^T } \left[\mathbf{v}\right]
+    -\frac{1}{2} \big[\mathbf{v}\big] \mathbf{R \left|\Lambda \right| L } \big[\mathbf{u}\big] = \frac{1}{2}\big[\mathbf{v}\big] \mathbf{R \left|\Lambda \right| R^T } \big[\mathbf{v}\big]
 \end{equation}
 We then have the following new \textit{entropy stable} upwind flux:
 \begin{equation} \label{eq:newFlux}
-    f^*_{\text{new}} = f_C - \frac{1}{2} \mathbf{R \left|\Lambda \right| R^T } \left[\mathbf{v}\right]
+    f^*_{\text{new}} = f_C - \frac{1}{2} \mathbf{R \left|\Lambda \right| R^T } \big[\mathbf{v}\big]
 \end{equation}
 where $f_C$ denotes the entropy conservative flux introduced in the previous section. We note that the $f_C$ flux is already entropy conservative. Mathematically, it satisfies the Tadmor conservation criterion: 
 \begin{equation}
-    \left[\mathbf{v}\right]\cdot f_C = \left[\rho u\right]
+    \big[\mathbf{v}\big]\cdot f_C = \big[\rho u\big]
 \end{equation}
 Then, the introduction of the upwinding with a \textit{constant} sign via reformulation guaranteed that the following \textit{inequality} will be satisfied:
 \begin{equation}
-    \left[\mathbf{v}\right] \cdot f^*_{\text{new}} \leq \left[\rho u\right]
+    \big[\mathbf{v}\big] \cdot f^*_{\text{new}} \leq \big[\rho u\big]
 \end{equation}
 which satisfies the entropy condition, and that the new flux is entropy \textit{stable}. 
 
@@ -627,7 +627,7 @@ With the new entropy stable flux, both problems are removed. However, Roe noted 
 
 Recall that the central flux generated $\mathcal{O}(\delta^3)$ flux in the old flux formulation Equation \ref{eq:oldFlux}. Roe then derived an additional flux term in Equation \ref{eq:oldFlux}:
 \begin{equation}
-    f^* = f_C - \frac{1}{2}\mathbf{R}(\left|\Lambda \right| + \alpha \left| \left[\Lambda\right] \right|) \mathbf{R}^T \left[\mathbf{v}\right]
+    f^* = f_C - \frac{1}{2}\mathbf{R}(\left|\Lambda \right| + \alpha \left| \big[\Lambda\big] \right|) \mathbf{R}^T \big[\mathbf{v}\big]
 \end{equation}
 where we could take $\alpha \approx 1/3$ and the new scheme would elimniate overshoots.
 
@@ -656,14 +656,14 @@ We now require the conservation equation for internal energy. We understand from
 Therefore:
 \begin{equation}
     \begin{split}
-        \frac{\partial (\rho(e + k))}{\partial t} + \frac{\partial}{\partial x} \left(\rho u e + up + \rho u k\right) &=  E_{\text{internal}} +     \frac{\partial \rho k}{\partial t} + \frac{\partial}{\partial x}(u(\rho k + p)) - p \frac{\partial u}{\partial x}\\
+        \frac{\partial (\rho(e + k))}{\partial t} + \frac{\partial}{\partial x} \big(\rho u e + up + \rho u k\big) &=  E_{\text{internal}} +     \frac{\partial \rho k}{\partial t} + \frac{\partial}{\partial x}(u(\rho k + p)) - p \frac{\partial u}{\partial x}\\
         E_{\text{internal}} &= \frac{\partial \rho e}{\partial t} + \frac{\partial}{\partial x}(\rho u e) + p \frac{\partial u}{\partial x}\\
     \end{split}
 \end{equation}
 We are now ready to derive the conservation equation for entropy. We first use Gibbs equation:
 \begin{equation}\label{eq:GibbsEquation}
-    \rho \frac{D e}{Dt} - \left(\frac
-    {P}{\rho}\right) \frac{D \rho}{D t} = \rho T \frac{D s}{D t}
+    \rho \frac{D e}{Dt} - \big(\frac
+    {P}{\rho}\big) \frac{D \rho}{D t} = \rho T \frac{D s}{D t}
 \end{equation}
 And we write the temporal derivative in the internal energy equation in total derivative form:
 \begin{equation} \label{eq:internalEnergy}
@@ -749,6 +749,37 @@ Assuming air with a $\gamma = 1.4$, $c$ and $c_p$ are guaranteed to be positive.
 Thus based on Harten's theorem, the entropy density $\rho s$ is strictly convex function of the states. 
 
 \subsubsection{Benefits of Convexity}
+Theoretically, convexity is essential to the idea of entropy condition. Let us again consider the single conservation law with a viscosity dissipation:
+\begin{equation} \label{eq:viscosuConservationLaw}
+    u_t + f(u)_x = \epsilon u_{xx}
+\end{equation}
+Assume scalar functions of $u$, $\eta(u)$ and its corresponding flux $\psi(u)$, we multiply Equation \ref{eq:viscosuConservationLaw} by $\eta'(u)$ to obtain the following:
+\begin{equation}
+    \eta(u)_t + \psi(u)_x = \epsilon \eta' (u) u_{xx}
+\end{equation}
+and separate out the derivative on the right hand side so that we have:
+\begin{equation}
+    \eta(u)_t + \psi(u)_x = \epsilon(\eta'(u)u_x)_x - \epsilon \eta'' (u) u_x^2
+\end{equation}
+If we integrate the above equation over both a spatial $\big[x_1, x_2\big]$ and temporal domain $\big[t_1, t_2\big]$:
+\begin{equation}
+    \int_{t_1}^{t_2} \int_{x_1}^{x_2} \eta(u)_t + \psi(u)_x  dx dt = \epsilon \int_{t_1}^{t_2} \big[\eta' (u(x_2,t)) u_x (x_2,t) - \eta' (u(x_1, t))u_x(x_1,t)\big] dt - \epsilon \int_{t_1}^{t_2} \int_{x_1}^{x_2} \eta''(u) u_x^2 dx dt
+\end{equation}
+The first term on the right vanishes as $\epsilon \rightarrow 0$ if the solution is \textit{smooth} over at $x_1$ and $x_2$. The second term on the right however, involves integrating over the entire spatial domain $x_1$ and $x_2$. If there exists a discontinuity within the solution, then the second term might not tend to zero. However, if we place a condition such that the salar function $\eta(u)$ is a \textit{convex} function such that:
+\begin{equation}
+    \eta'' > 0
+\end{equation}
+Then, we understand the following:
+\begin{equation}
+    \eta'' > 0, u_x^2 > 0, \ \epsilon > 0
+\end{equation}
+We can conclude that the right hand side is \textit{non-positive} in the limit due to the negative sign in front, and the overall equation satisfies the entropy conditin:
+\begin{equation}
+    \int_{t_1}^{t_2} \int_{x_1}^{x_2} \eta(u)_t + \psi (u)_x dx dt \leq 0
+\end{equation}
+We then see that the entropy function being convex is essential to the conservation law's satisfying the entropy condition. 
+
+\subsection{Roe Flux and Entropy Stability}
 
 %---------------------------------------------------------------------------------------------
 \bibliographystyle{plain} % We choose the "plain" reference style
