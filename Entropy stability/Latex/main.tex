@@ -337,7 +337,7 @@ If we have Burger's equation, then the flux becomes: $f(u) = \frac{u^2}{2}$:
         \end{cases}\\
     \end{split}
 \end{equation}
-If we consider an arbitary, following the notation from Equation \ref{eq:E-O Conservation Law}, we have, 
+If we consider an arbitrary, following the notation from Equation \ref{eq:E-O Conservation Law}, we have, 
 \begin{equation}
     \Delta_- f_+ = f^+(w_j) + f^-({w_{j+1}})
 \end{equation}
@@ -346,14 +346,14 @@ The Engquist and Osher scheme demonstrated computational advantages over all pre
 The E-O scheme is \textit{monotone} if the CFL condition (Equation \ref{eq:E-O_CFL}) is valid[]. Lax proved in [] that monotone schemes always satisfy the entropy condition and converge to a physically relevant solution. From this theorem, we then know that E-O scheme is entropy stable if the CFL condition if Equation \ref{eq:E-O_CFL} is satisfied.
 
 %----------------------------------------------------------------------
-\section{The Roe Scheme}
-Professor Philip Roe first introduced the Roe scheme in 1980 in his paper \textit{Approximate Riemann Solvers, Parameter Vectors, and Difference Scheme} []. In his paper, Roe argued that an exact solution to the Riemann problem may not be necessary and we could construct an \textit{approximate} solutions which are the \textit{exact} solutions to an approximate problem. This is the motive behind the \textit{Roe's Average}. 
-\subsection{Roe's Average}
+\section{The Roe Scheme and Roe's Average}
+Philip Roe first introduced the Roe scheme in 1980 in his paper \textit{Approximate Riemann Solvers, Parameter Vectors, and Difference Scheme} []. In his paper, Roe argued that an exact solution to the Riemann problem may not be necessary and we could construct an \textit{approximate} solutions which are the \textit{exact} solutions to an approximate, \textit{linearized} Riemann problem. This section talk mainly on the Motivation and derivation of the Roe scheme. Section \ref{sec:RoeFluxAlgorithm} provides details on the implementations of Roe flux. 
+\subsection{Motivation}
 Consider again the one-dimensional linear advection equation:
 \begin{equation}
-    u_t + au_x = 0
+    u_t + a(u)u_x = 0
 \end{equation}
-where we construct an approximate version:
+where $a(u)$ is typically a non-linear. Instead, we construct a linearized problem defined locally at each cell interface:
 \begin{equation}
     \mathbf{u}_t + \tilde{A}\mathbf{u}_x = 0
 \end{equation}
@@ -379,27 +379,31 @@ We then follow that the matrix $\tilde{A}$ could be constructed from mean value 
 \begin{equation}
     \tilde{A} = \int_0^1 A(\theta) d \theta
 \end{equation}
-where $\theta$ is a parameter that vary linearly between 0 and 1 along a straight path connecting each state. By choosing a suitable integration path, candidates for $A$ that is closed and cheap to compute could be found. We could then have the following formula based on $\tilde{A}$:
-\begin{equation} \label{Roe's Integral}
-    F_j(\mathbf{u}_L) - F_j(\mathbf{u}_R) = \sum_i \tilde{a}_{ij} \big[(u_i)_L - (u_i)_R\big]
-\end{equation} 
-where $a_ij$ is the matrix entries into $\tilde{A}$. The $\tilde{a}_{ij}$ satisfies the first amd third conditions of Property U.
+where $\theta$ is a parameter that vary linearly between 0 and 1 along a straight path connecting each state. However, there is no guarantee that there would exist a candidate that satisfies the integral along with the above listed condition. In addition, it is generally not possible to evaluate the above integral within a closed form for most nonlinear problems of interest.
 
-However, the primary disadvantage of the above construction lies in that the matrix is far from unique, and the resulting formulae for eigenvalues and eigenvectors are sometimes quite cumbersome. For Euler's equation, however, the above formulae simplifies greatly due to Euler's homogenity characteristic. 
+Roe made a significant breakthrough in his paper by a \textit{change of variable}, that made the integral much easier to evaluate. We will demonstrate in the next section for Euler's equation how this change of parameter led to the Roe's average. Generally, the new parameter should be chosen such that the original states could be expressed as a polynomial for ease of taking derivatives and integration.
 
-\subsection{Roe's Scheme for Euler's Equation}
-For Euler's compressible flow equation (or polytropic ideal gases), Roe introduced a change of variable:
+\subsection{Roe's Average and  Euler's Equation}
+Roe introduced the following parameter vector:
 \begin{equation}
-    \mathbf{w} = \rho^{1/2}(1,u,v,w,H)^T
+    \mathbf{w} = \sqrt{\rho} 
+    \begin{bmatrix}
+        1\\
+        u\\
+        v\\
+        w\\
+        H\\
+    \end{bmatrix}
 \end{equation}
-which allow us to easily integrate and satisfy the Equation \ref{Roe's Integral}. We introduce two equations:
+we notice that via this construction, the original states and fluxes are expressed as a quadratic combination of $\mathrm{w}_i$, i.e $u_1 = \mathrm{w}_1^2$ and $f_1 = \mathrm{w}_1 \mathrm{w}_2$. We then proceed to express the jump in $\mathbf{u}$ and $\mathbf{F}$ in terms of jump in the parameter vector $\mathbf{w}$.
+
 \begin{equation}
     \begin{split}
         \big(\mathbf{u}_L - \mathbf{u}_R\big) &= \tilde{B}(\mathbf{w}_L - \mathbf{w}_R)\\
         \big(\mathbf{F}_L - \mathbf{F}_R\big) &= \tilde{C}(\mathbf{w}_L - \mathbf{w}_R)\\
     \end{split}
 \end{equation}
-where the first equation provides a link for $\mathbf{w}$ in terms of $\mathbf{u}$. Then, through the new change of variables conducted we could write the following $\tilde{B}$ and $\tilde{C}$ matrix:
+where the first equation provides a link for $\mathbf{w}$ in terms of $\mathbf{u}$. We are looking for matrix $\tilde{B}$ and $\tilde{C}$, which Roe gave in [] as follow:
 \begin{equation}
     \begin{split}
         \tilde{B} &=
@@ -424,15 +428,16 @@ The $\bar{\cdot}$ indicates the arithmatic average of the selected quanitites. W
 \begin{equation}
     \tilde{A} = \tilde{C}\tilde{B}^{-1}
 \end{equation}
-In the process of providing an analytical equation for both the eigenvalues and eigenvectors, Roe then introduced a different form of averaging for ease of convention:
+From which, Roe then adopted a simplifying convention from the resulting $\tilde{A}$ matrix by dividing through with $\mathrm{w}$:
 \begin{equation}
-    u = \frac{\rho^{1/2}_L u_L + \rho^{1/2}_R u_R}{\rho_L^{1/2} + \rho_R^{1/2}} = \frac{\bar{\mathrm{w}}_2}{\bar{\mathrm{w}}_1}
+    u = \frac{\bar{\mathrm{w}}_2}{\bar{\mathrm{w}}_1}, \ v = \frac{\bar{\mathrm{w}}_3}{\bar{\mathrm{w}}_1}, \ w = \frac{\bar{\mathrm{w}}_4}{\bar{\mathrm{w}}_1}, \ H = \frac{\bar{\mathrm{w}}_5}{\bar{\mathrm{w}}_1}
 \end{equation}
-We could also follow similar convention for:
+When expanded out (for $u$), it leads to:
 \begin{equation}
-    v = \frac{\bar{\mathrm{w}}_3}{\bar{\mathrm{w}}_1}, \ w = \frac{\bar{\mathrm{w}}_4}{\bar{\mathrm{w}}_1}, \ H = \frac{\bar{\mathrm{w}}_5}{\bar{\mathrm{w}}_1}
+    u = \frac{\bar{\mathrm{w}}_2}{\bar{\mathrm{w}}_1} = \frac{\rho^{1/2}_L u_L + \rho^{1/2}_R u_R}{\rho_L^{1/2} + \rho_R^{1/2}}
 \end{equation}
-The above relations are known as the Roe average, in which Roe derived on obtaining a solution to the linearized Riemann problem. It is to be noted that $\tilde{A}$ is equal to the original matrix $A$ when evaluated with the Roe averaged states above. 
+
+The above relations are known as the \textit{Roe average}, in which Roe derived when obtaining a suitable $\tilde{A}$ matrix solvinf the linearized Riemann problem. Roe average states are an intermediate state between the two discontinuities and is important because it is the \textit{only} type of averaging that would gaurantee an exact projection of the state jump onto the right eigenvectors. It is to be noted that $\tilde{A}$ is equal to the original matrix $A$ when evaluated with the Roe averaged states above.
 %%-----------------------------------------------------------------------------------
 \section{Tadmor's Entropy Stability Criterion}
 Eitan Tadmor, in his paper written in 1987, introduced a new, general, criterion capable of evaluating entropy conservation of different numerical fluxes. This section summarizes his paper and the two main theorems that he proposed:
@@ -541,7 +546,7 @@ From Tadmor, we know that entropy production across an interface could be charac
 \begin{equation}
     \Delta \mathbf{v}_{\nu + 1/2}^T \mathbf{g}_{\nu + 1/2} - (\Psi_{\nu + 1} - \Psi_\nu), \ \Delta \mathbf{v}_{\nu + 1/2} = \mathbf{v_{\nu + 1}} - \mathbf{v}_\mathbf{\nu}
 \end{equation}
-where $\mathbf{v}$ represents the entropy variable and $\Psi$ is an arbitary grid function. For Euler's equation in 1D, the above two quanitites are:
+where $\mathbf{v}$ represents the entropy variable and $\Psi$ is an arbitrary grid function. For Euler's equation in 1D, the above two quanitites are:
 \begin{equation}
     \begin{split}
         \mathbf{v} &= 
@@ -566,15 +571,38 @@ The third order production is small in smooth region, large across shocks and in
     \big[\mathbf{v}\big] \cdot \mathbf{g} = \big[\rho u\big]
 \end{equation}
 Roe then introduced the following Entropy conservative flux:
+
+
 \subsection{An Entropy Conservative Flux}
-We at first define a parameter vector:
+Similar to the Roe flux derivation, we at first define a parameter vector for change of variable:
 \begin{equation}
     \mathbf{z} = \sqrt{\frac{\rho}{p}} (1, u, p)
+\end{equation}
+from which we could redefine our state vector (For Euler's Equation) as:
+\begin{equation}
+    \mathbf{u}(\mathbf{z}) = 
+    \begin{bmatrix}
+        \rho\\
+        \rho u \\
+        E\\
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        z_1 z_3\\
+        z_2 z_3\\
+        \frac{1}{\gamma - 1} \frac{z_3}{z_1} + \frac{1}{2} \Bigl(\frac
+        {(z_2z_3)^2}{z_1z_3} \Bigr)
+    \end{bmatrix}
 \end{equation}
 which we could then redefine the entropy variable as:
 \begin{equation}
     \mathbf{v} = \big(\frac{\gamma}{\gamma - 1} + \frac{\gamma + 1}{\gamma -1} \ln z_1 + \ln z_3 - \frac{1}{2} z_2^2, z_1 z_2, -z_1^2\big)^T
 \end{equation}
+Tadmor in 2003 arrived at an explicit solution for an entropy conservative flux:
+\begin{equation}
+    f^* = \sum_k \frac{\big[ \rho u\big]_{k + \frac{1}{2}}}{ \big[ \mathbf{v}\big] \cdot \delta \mathbf{u}_{k + \frac{1}{2}}} \delta \mathbf{u}_{k+1/2}
+\end{equation}
+
+
 We then have the following flux:
 \begin{equation}
     \begin{split}
@@ -596,7 +624,7 @@ So far the flux presented exactly preserves entropy (i.e only the equality in Eq
 \begin{equation} \label{eq:oldFlux}
     f^* = \bar{f} - \frac{1}{2}\left|\mathbf{A} \right| \big[\mathbf{u}\big]
 \end{equation}
-The second term introduces the upwind component on top of a central flux. $\left|\mathbf{A}\right| = \mathbf{R \left|\Lambda \right| L }$ is the absolute value of the flux Jacobian evaluated at an arbitary state (i.e Roe's averaged state). Following Tadmor's approach, we quanitify that the entropy produced at with the upwind is:
+The second term introduces the upwind component on top of a central flux. $\left|\mathbf{A}\right| = \mathbf{R \left|\Lambda \right| L }$ is the absolute value of the flux Jacobian evaluated at an arbitrary state (i.e Roe's averaged state). Following Tadmor's approach, we quanitify that the entropy produced at with the upwind is:
 \begin{equation}
     -\frac{1}{2} \big[\mathbf{v}\big] \mathbf{R \left|\Lambda \right| L } \big[\mathbf{u}\big]
 \end{equation}
@@ -715,7 +743,22 @@ We note that we could combine boht the temporal derivative and spatial derivativ
 We have then arrived at the conservation equation for entropy. Note that in our case, we did not include terms such as viscous dissipation or heat source. If such terms are present, they would appear on the right hand side as source terms.
 
 \subsection{Formalizing Derivation}
-\subsection{Dimension}
+Assuming we have an arbitrary conservation law of the following scalar quantities in terms of arbitrary states $(u_1,\ u_2, \ u_3)$ that we are interested in $Q(u_1,u_2,u_3)$. In addition, we have the time derivative (the conservation law) of the above states. We could formalize its derivation via chain rule:
+
+\begin{equation}
+    \frac{\partial Q}{\partial t} = \frac{\partial Q}{\partial u_1} \frac{\partial u_1}{\partial t} + \frac{\partial Q}{\partial u_2} \frac{\partial u_2}{\partial t} + \frac{\partial Q}{\partial u_3}\frac{\partial u_3}{\partial t}
+\end{equation}
+where we subsitute into the state time derivatives their respective conservation law. For example, we cite the kinetic energy equation again:
+\begin{equation}
+    \begin{split}
+        \frac{\partial (\rho k)}{\partial t} = \frac{1}{2} \frac{\partial}{\partial t}\biggl(\frac{(\rho u)^2}{\rho} \biggr) = u \frac{\partial \left(\rho u \right) }{\partial t}  - \frac{1}{2} u^2 \frac{\partial \rho}{\partial t}
+    \end{split}
+\end{equation}
+where we see in this case that $u_1 = \left(\rho u \right)$ and $u_2 = \left(u\right)$. We also demonstrate that the number of dimensions does not matter in this case. For 2D kinetic energy equation: 
+\begin{equation}
+    \frac{\partial (\rho k)}{\partial t} = \frac{1}{2} \frac{\partial}{\partial t}\biggl(\frac{(\rho u)^2 + (\rho v)^2}{\rho} \biggr) = u \frac{\partial \left(\rho u \right) }{\partial t} + v \frac{\partial (\rho v)}{\partial t} - \frac{1}{2} (u^2 + v^2) \frac{\partial \rho}{\partial t}
+\end{equation}
+where we see in this case: $u_1 = \rho u, \ u_2 = \rho v, \ u_3 = u $, wherea all states have their own time evolution equations according to the 2D Euler's equation. 
 \subsection{Convexity}
 \subsubsection{Definition}
 Convexity is a geometric condition in which if we draw a line between any two points on a convex function, the line \textit{always} lie above the function. Mathematically, it is defined as the following:
@@ -780,6 +823,214 @@ We can conclude that the right hand side is \textit{non-positive} in the limit d
 We then see that the entropy function being convex is essential to the conservation law's satisfying the entropy condition. 
 
 \subsection{Roe Flux and Entropy Stability}
+In this section, we apply Tadmor's entropy criterion on the Roe flux, which in its original form is is entropy-violating. We then apply to the Roe flux an entropy fix, introduced by Harten and Hyman [], and demonstrate by Tadmor's entropy conservation criterion, the differences in entropy production. We first begin by a discussion of the Roe flux algorithm.
+
+\subsubsection{Roe Flux Implementation} \label{sec:RoeFluxAlgorithm}
+To implement the Roe flux, we start via the following series of steps. Note that these ONLY apply to a 1D scenario:
+\begin{enumerate}
+    \item Compute the Roe averaged states:
+    \begin{equation}
+        \begin{split}
+            \tilde{u} &= \frac{\sqrt{\rho_L} u_L + \sqrt{\rho_R} u_R 
+            }{\sqrt{\rho_L} + \sqrt{\rho_R}}\\
+            \tilde{H} &= \frac{\sqrt{\rho_L} H_L + \sqrt{\rho_R} H_R 
+            }{\sqrt{\rho_L} + \sqrt{\rho_R}}\\
+            \tilde{a} &= \biggl((\gamma - 1) (\tilde
+            H - \frac{1}{2} \tilde{u}^2)\biggr)^{1/2}\\
+        \end{split}
+    \end{equation}
+    \item Compute the averaged eigenvalues $\tilde{\lambda}$
+    \begin{equation}
+        \tilde{\lambda}_1 = \tilde{u} - \tilde{a},\ \tilde{\lambda}_2 = \tilde{u}, \ \tilde{\lambda}_3 = \tilde{u} + \tilde{a}
+    \end{equation}
+    \item Compute the right eigenvectors:
+    \begin{equation}
+        \begin{split}
+            \tilde{\mathbf{K}}^{(1)} &= 
+            \begin{bmatrix}
+                1\\
+                \tilde{u} - \tilde{a}\\
+                \tilde{H} - \tilde{u}\tilde{a}\\
+            \end{bmatrix}\\
+            \tilde{\mathbf{K}}^{(2)} &= 
+            \begin{bmatrix}
+                1\\
+                \tilde{u}\\
+                \frac{1}{2}\tilde{V}^2\\
+            \end{bmatrix}\\
+            \tilde{\mathbf{K}}^{(3)} &= 
+            \begin{bmatrix}
+                1\\
+                \tilde{u} + \tilde{a}\\
+                \tilde{H} + \tilde{u}\tilde{a}\
+            \end{bmatrix}\\
+        \end{split}
+    \end{equation}
+    \item  Compute wave strength:
+    \begin{equation}
+        \begin{split}
+            \tilde{\alpha}_2 &= \frac{\gamma - 1}{\tilde{a}^2} \bigg[\Delta u_1 (\tilde{H} - \tilde{u}^2) + \tilde{u} \Delta u_2 - \Delta u_5    \bigg]\\
+            \tilde{\alpha}_1 &= \bigg[\Delta u_1 (\tilde{u} + \tilde{a})  - \Delta u_2 - \tilde{a} \tilde{\alpha}_2\bigg]\\
+            \tilde{\alpha}_3 &= \Delta u_1 - \bigl(\tilde{\alpha}_1 + \tilde{\alpha}_2 \bigr)\\
+        \end{split}
+    \end{equation}
+    In this case, $\Delta u_i$ refers to the state difference between the right and left cell:
+    \begin{equation}
+        \Delta \mathbf{U} = \mathbf{U}_R - \mathbf{U}_L
+    \end{equation}
+    \item We now compute the edge flux, $\mathbf{F}_{i + \frac{1}{2}}$ via:
+    \begin{equation}\label{eq:Roe Edge Flux}
+        \mathbf{F}_{i + \frac{1}{2}} = \frac{1}{2} \bigl(\mathbf{F}_L + \mathbf{F}_R\bigr) - \frac{1}{2} \sum_{i = 1}^{m} \tilde{\alpha}_i \big|\tilde{\lambda}_i\big| \tilde{\mathbf{K}}^{(i)} 
+    \end{equation}
+    where $m = 3$ for 1D Euler equation. 
+\end{enumerate}
+\subsubsection{Entropy Fix}
+However, although the Roe flux saw wide usage after its publication, it is a linearized Riemann solver which could \textit{only} process discontinous jumps. This approximation is valid for contact discontinuity and shocks. However, on rarefraction (expansion) waves, however, it not accurate as they carry a continous change in flow variables, which an approximation as a single discontinuity is obviously incorrect. In practical cases, it is only at areas of \textit{transonic} or \textit{sonic} does the Roe really break. To fix this issue, Harten and Hyman first proposed an entropy fix algorithm for the Roe flux[]. We discuss this entropy fix and its implementation in the following section.
+\subsubsection{Harten-Hyman Entropy Fix}
+
+The Roe's flux requires an entropy fix when it encouters a transonic or sonic rarefraction wave. These can be represented by the following:
+\begin{equation}
+    \lambda_1^L = u_L - a_L; \ \lambda_1^R = u_* - a_{*L}
+\end{equation}
+and 
+\begin{equation} \label{eq:LeftRarefractionWaveCondition}
+    \lambda_1^L < 0 < \lambda_1^R
+\end{equation}
+where the left and right waves are traveling in opposite direction. The general idea behind the Harten-Hyman fix lies where they split the single transonic jumps into two waves $\mathbf{U}_{SL} - \mathbf{U}_L$ and $\mathbf{U}_{*L} - \mathbf{U}_{SL}$ traveling at $\lambda_1^R$ and $\lambda_1^L$ respectively. Via applying the integral form of the conservation law would give us the following:
+\begin{equation}
+    \lambda_1^R (\mathbf{U}_{SL} - \mathbf{U}_{*L}) +     \lambda_1^L (\mathbf{U}_{L} - \mathbf{U}_{SL}) = \tilde{\lambda}_1 (\mathbf{U}_L - \mathbf{U}_{*L})
+\end{equation}
+
+We then obtain the following:
+\begin{equation}
+    \mathbf{U}_{SL} - \mathbf{U}_L = \frac{(\lambda_1^R - \tilde{\lambda}_1)}{(\lambda_1^R - \lambda_1^L)} (\mathbf{U}_{*L} - \mathbf{U}_L)
+\end{equation}
+
+via Roe's approximation $\mathbf{U}_{*L} - \mathbf{U}_L = \tilde{a}_1 {\tilde{\mathbf{K}}}^{(1)}$, which we then arrive at the following:
+\begin{equation}
+    (\Delta \mathbf{F})_1^L = \lambda_1^L \biggl(\frac{\lambda_1^R - \tilde{\lambda}_1}{\lambda_1^R - \lambda_1^L}
+    \biggr) \tilde{\alpha_1} \tilde{\mathbf{K}^{(1)}}
+\end{equation}
+We now arrive at the following eigenvalue approximation:
+\begin{equation}
+    \bar{\lambda}_1 = \lambda_1^L \biggl(\frac{\lambda_1^R - \tilde{\lambda}_1}{\lambda_1^R - \lambda_1^L}
+    \biggr)
+\end{equation}
+Note that the above result is for left rarefraction wave. For the right wave, we could use a similar logic to arrive at the following:
+\begin{equation}
+    \bar{\lambda}_3 = \lambda_3^R \biggl(\frac{
+    \tilde{\lambda}_3 - \lambda_3^L }{\lambda_3^R - \lambda_3^L}\biggr)
+\end{equation}
+
+wherea:
+\begin{equation}
+    \begin{split}
+        \lambda_3^L = u_* + a_{*R}, \ \lambda_3^R = u_R + a_R
+    \end{split}
+\end{equation}
+and a right rarefraction is identified when:
+\begin{equation}\label{eq:RightRarefractionWaveCondition}
+    \lambda_3^L < 0 < \lambda_3^R
+\end{equation}
+
+We now have a general algorithm for the Harten and Hyman entropy fix.
+\begin{enumerate}
+    \item Within every flux iteration, calculate the $\lambda_1^L, \ \lambda_1^R, \ \lambda_3^L, \ \lambda_3^R$, and run through Equation \ref{eq:LeftRarefractionWaveCondition} and \ref{eq:RightRarefractionWaveCondition} to check if there exists a sonic rarefraction wave.
+    \item If left rarefraction, calculate the sonic quantities using the below formula:
+    \begin{equation}
+        \rho_{*L} = \rho_L + \bar{\alpha}_1, \ u_* = \frac{\rho_L u_L + \tilde{\alpha}_1 (\tilde{u} - \tilde{a})}{\rho_L \tilde{\alpha}_1} ,\ p_{*} = (\gamma - 1) \bigg[E_L + \bar{\alpha}_1 (\tilde{H}- \tilde{u} \tilde{a}) - \frac{1}{2} \rho_{*L} u_*^2\bigg], \ a_{*L} = \sqrt{\frac{\gamma p_*}{\rho_{*}}}
+    \end{equation}
+    \item Else if right rarefraction, follow:
+    \begin{equation}
+        \rho_{*R} = \rho_R - \tilde{\alpha}_3, \ 
+        u_* = \frac{\rho_R u_R - \tilde{\alpha}_3 (\tilde{u} + \tilde{a})}{\rho_R -  \tilde{\alpha}_3} ,\ 
+        p_{*} = (\gamma - 1) \bigg[E_R - \bar{\alpha}_3 (\tilde{H} + \tilde{u} \tilde{a}) - \frac{1}{2} \rho_{*R} u_*^2\bigg], \ 
+        a_{*R} = \sqrt{\frac{\gamma p_*}{\rho_{*}}}
+    \end{equation}
+    \item Replace the respective eigenvalues $\lambda_i$ in Equation \ref{eq:Roe Edge Flux} when encountering respective rarefractions.
+\end{enumerate}
+
+\subsubsection{Numerical Test Case}
+Recall that the Euler equation is as follow:
+
+\begin{equation}
+    \begin{split}
+        \mathbf{U}_t + \mathbf{F}(\mathbf{U})_x &= \mathbf{0}\\
+    \end{split}
+\end{equation}
+where:
+\begin{equation}
+    \begin{split}
+        \mathbf{U} = 
+        \begin{bmatrix}
+            \rho\\
+            \rho u\\
+            E\\
+        \end{bmatrix}, \
+        \mathbf{F} = 
+        \begin{bmatrix}
+            \rho u\\
+            \rho u^2 + p\\
+            u(E + p)\\
+        \end{bmatrix}
+    \end{split}
+\end{equation}
+
+We consider modified version of the classic Sod's shock tube problem which contains a amplified left velocity for specifically assessing the entropy satisfication property. The shock tube problem was chosen because  This is a 1D Euler's test case with the following initial condition:
+\begin{center}
+    \begin{tabular}{||c c c|c c c||} 
+     \hline
+     $\rho_L$ & $u_L$ & $p_L$ & $\rho_R$ & $u_R$ & $p_R$ \\
+     \hline
+     1.0 & 0.75 & 1.0 & 0.125 & 0.0 & 0.1 \\ 
+     \hline
+    \end{tabular}
+\end{center}
+with a domain of $x = \big[0,1\big]$, the discontinuity present at $x_0 = 0.3$,  $\gamma = 1.4$ and $t_{\text{end}} = 0.2s$. Figure \ref{fig:ShockTubeInitialConditon} illustrates the initial condition across the specified domain.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{fig/InitialCondition.png}
+    \caption{Initial condition for the modified Sod shock tube problem}
+    \label{fig:ShockTubeInitialConditon}
+\end{figure}
+We proceed to solve the problem via a 1D finite volume solver utilizing the Roe flux.
+
+\subsubsection{Results}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=17cm]{fig/Sod_shock_tube_results.png}
+    \caption{Results for of the shock tube problem}
+    \label{fig:ShockTubeResults}
+\end{figure}
+Figure \ref{fig:ShockTubeResults} illustrates the results of the shock tube problem, both with and without the entropy fix. We could clearly observe that without the entropy fix, there exists an unphysical discontinuity located within the sonic rarefraction $x_0 \approx 0.3$. With the entropy fix, however, the plot becomes continous and the solution appears much more physical. 
+
+We again recall Tadmor's entropy criterion in terms of Euler's equation introduced by Roe:
+\begin{equation} \label{eq:TadmorCriterion}
+    \big[\mathbf{v}\big] \cdot f^*_{\text{new}} \leq \big[\rho u\big]
+\end{equation}
+where:
+\begin{equation}
+    \begin{split}
+        \mathbf{v} &= 
+        \begin{pmatrix}
+            \frac{\gamma - S}{\gamma - 1}-\frac{\rho u^2}{2p} \\
+            \frac{m}{p}\\
+            -\frac{\rho}{p}
+        \end{pmatrix}\\
+        \Psi &= \rho u
+    \end{split}
+\end{equation} 
+We could physically calculate the above quantities and assess whether the Roe flux is \textit{entropy conservative}. We obtain the following plot (Figure \ref{fig:TadmorResults}).
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=13cm]{fig/Tadmor_Criterion.png}
+    \caption{Entropy production based on Tadmor's conservative criteria}
+    \label{fig:TadmorResults}
+\end{figure}
+We see that \textit{without} the entropy fix, there exists a sharp peak that overshoots the entropy conservative criterion at the location of the sonic rarefraction $x \approx 0.3$. This then contributed to the unphysical states predicted by the original Roe flux. With the entropy fix, however, the entropy produced by the new Roe flux exactly matches that of the criterion, illustrating that the entropy-fixed Roe flux is entropy conservative at sonic rarefractions. This is also analogous to the idea in gas dynamics, where expansion fans are \textit{isentropic} and entropy is \textit{conserved} across the process. 
+
+Speaking of entropy production, it is interesting to look at behavior across contact discontinuity and shock ($x \approx 0.55$ and $x \approx 0.75$). Across both discontinuities, the entropy is not preserved but \textit{decreased}. In terms of Tadmor's criterion, this trend satisfies the inequality given by Equation \ref{eq:TadmorCriterion}. From a thermodynamic point of view, this result also makes sense as entropy is not conserved across shock but is \textit{increased}. In the mathematical definition of entropy, the direction that maintains a physical solution is of \textit{decreasing} entropy, which is what we observe here for the entropy-fixed Roe flux. Therefore, through a numerical experiment, we have proven that the entropy-fixed Roe flux is indeed entropy stable.
 
 %---------------------------------------------------------------------------------------------
 \bibliographystyle{plain} % We choose the "plain" reference style
